@@ -12,6 +12,8 @@ struct ThiruVazhiApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.light)
+                .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
