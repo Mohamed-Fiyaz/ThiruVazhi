@@ -9,11 +9,17 @@ import SwiftUI
 
 @main
 struct ThiruVazhiApp: App {
+    @State private var isActive = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .preferredColorScheme(.light)
-                .navigationViewStyle(StackNavigationViewStyle())
+            if isActive {
+                ContentView()
+                    .preferredColorScheme(.light)
+                    .navigationViewStyle(StackNavigationViewStyle())
+            } else {
+                LaunchScreenView(isActive: $isActive)
+            }
         }
     }
 }
