@@ -37,6 +37,7 @@ struct ExploreView: View {
     var body: some View {
         VStack(spacing: 0) {
             SearchBar(text: $searchText)
+                .padding(.top, 20)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {

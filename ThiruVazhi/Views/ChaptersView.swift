@@ -20,7 +20,6 @@ struct ChaptersView: View {
                 .fontWeight(.semibold)
                 .padding(.top, 20)
             
-            // Book selection buttons
             HStack(spacing: 12) {
                 ForEach(["Virtue", "Wealth", "Love"], id: \.self) { book in
                     Button(action: { selectedBook = book }) {

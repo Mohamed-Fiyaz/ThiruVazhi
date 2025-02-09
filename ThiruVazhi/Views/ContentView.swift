@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// Update ContentView to ensure light mode
 struct ContentView: View {
     @StateObject private var viewModel = ThirukkuralViewModel()
     @StateObject private var favoriteManager = FavoriteManager()
@@ -15,7 +14,6 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Navigation Bar
             HStack {
                 Spacer()
                 Text("ThiruVazhi")
@@ -26,7 +24,6 @@ struct ContentView: View {
             }
             .background(AppColors.primaryRed)
             
-            // Content
             TabView(selection: $selectedTab) {
                 HomeView(viewModel: viewModel, favoriteManager: favoriteManager)
                     .tag(0)
@@ -42,5 +39,6 @@ struct ContentView: View {
             CustomTabBar(selectedTab: $selectedTab)
         }
         .preferredColorScheme(.light)
+        .background(AppColors.primaryBG)
     }
 }

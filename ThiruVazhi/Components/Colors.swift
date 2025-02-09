@@ -13,6 +13,7 @@ struct AppColors {
     static let cardBg = Color(hex: "#E6D5B8")
     static let cardStroke = Color(hex: "#8B5A2B")
     static let goldText = Color(hex: "#F9D55B")
+    static let primaryBG = Color(hex: "#F5F5F5")
 }
 
 extension Color {
