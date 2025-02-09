@@ -15,10 +15,57 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var kuralOfTheDay: Kural?
     @Published var showTamilText = true
     @Published var randomKural: Kural?
+    @Published var expandedFavoriteKurals = false
+    @Published var expandedFavoriteChapters = false
+    @Published var filteredKurals: [Kural] = []
+    
+    private var searchWorkItem: DispatchWorkItem?
+    
+    func getChapterAndBookForKural(_ kuralNumber: Int) -> (chapterName: String, bookName: String)? {
+        guard let details = details else { return nil }
+        
+        for book in details.section.detail {
+            for chapterGroup in book.chapterGroup.detail {
+                for chapter in chapterGroup.chapters.detail {
+                    if kuralNumber >= chapter.start && kuralNumber <= chapter.end {
+                        return (chapter.translation, book.translation)
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    func performSearch(query: String) {
+        searchWorkItem?.cancel()
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            if query.isEmpty {
+                DispatchQueue.main.async {
+                    self.filteredKurals = []
+                }
+                return
+            }
+            
+            let filtered = self.kurals.filter { kural in
+                kural.Translation.localizedCaseInsensitiveContains(query) ||
+                kural.explanation.localizedCaseInsensitiveContains(query)
+            }
+            
+            DispatchQueue.main.async {
+                self.filteredKurals = filtered
+            }
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.3, execute: workItem)
+    }
     
     init() {
         loadData()
         setKuralOfTheDay()
+        generateRandomKural() // Generate initial random Kural during initialization
     }
     
     private func loadData() {
@@ -38,7 +85,12 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     func generateRandomKural() {
-        randomKural = kurals.randomElement()
+        // Ensure we don't select the same Kural as the Kural of the day
+        var newRandomKural = kurals.randomElement()
+        while newRandomKural?.Number == kuralOfTheDay?.Number {
+            newRandomKural = kurals.randomElement()
+        }
+        randomKural = newRandomKural
     }
     
     private func setKuralOfTheDay() {

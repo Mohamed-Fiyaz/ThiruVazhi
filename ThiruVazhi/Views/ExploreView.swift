@@ -24,30 +24,29 @@ struct ExploreView: View {
         ("Politics & Generosity", "building.columns")
     ]
     
-    var filteredKurals: [Kural] {
-        if searchText.isEmpty {
-            return []
-        }
-        return viewModel.kurals.filter { kural in
-            kural.Translation.localizedCaseInsensitiveContains(searchText) ||
-            kural.explanation.localizedCaseInsensitiveContains(searchText)
-        }
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
-            SearchBar(text: $searchText)
-                .padding(.top, 20)
+            SearchBar(text: $searchText) { query in
+                viewModel.performSearch(query: query)
+            }
+            .padding(.top, 20)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     if !searchText.isEmpty {
-                        Text("Search Results")
-                            .font(.headline)
-                            .padding(.horizontal)
-                        
-                        ForEach(filteredKurals) { kural in
-                            KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                        if !viewModel.filteredKurals.isEmpty {
+                            Text("Search Results")
+                                .font(.headline)
+                                .padding(.horizontal)
+                            
+                            ForEach(viewModel.filteredKurals) { kural in
+                                KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                            }
+                        } else {
+                            Text("No results found")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                                .padding()
                         }
                     } else {
                         Text("Themes")
@@ -61,10 +60,18 @@ struct ExploreView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal)
                     }
                 }
-                .padding()
+                .padding(.vertical)
             }
         }
+        .onTapGesture {
+            hideKeyboard()
+        }
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

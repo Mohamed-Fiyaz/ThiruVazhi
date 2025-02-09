@@ -12,6 +12,27 @@ struct ChaptersView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @State private var selectedBook = "Virtue"
+    @State private var searchText = ""
+    
+    var filteredChapters: [Chapter] {
+        guard let details = viewModel.details else { return [] }
+        let chapters = details.section.detail
+            .filter { $0.translation == selectedBook }
+            .flatMap { book in
+                book.chapterGroup.detail.flatMap { group in
+                    group.chapters.detail
+                }
+            }
+        
+        if searchText.isEmpty {
+            return chapters
+        }
+        
+        return chapters.filter { chapter in
+            chapter.translation.localizedCaseInsensitiveContains(searchText) ||
+            chapter.transliteration.localizedCaseInsensitiveContains(searchText)
+        }
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -33,29 +54,24 @@ struct ChaptersView: View {
                 }
             }
             
-            SearchBar(text: .constant(""))
+            SearchBar(text: $searchText) { _ in }
                 .padding(.horizontal)
             
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(1...4, id: \.self) { index in
-                        VStack {
-                            Text("Chapter \(index)")
-                                .font(.headline)
-                            if index % 2 == 0 {
-                                Text("On the Necessity of rain for life")
-                            } else {
-                                Text("The Praise of God")
-                            }
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(AppColors.cardBg)
-                        .cornerRadius(10)
+                    ForEach(filteredChapters) { chapter in
+                        ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
                     }
                 }
                 .padding()
             }
         }
+        .onTapGesture {
+            hideKeyboard()
+        }
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

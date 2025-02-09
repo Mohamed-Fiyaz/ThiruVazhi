@@ -12,13 +12,24 @@ struct KuralCard: View {
     let kural: Kural
     let showTamilText: Bool
     @ObservedObject var favoriteManager: FavoriteManager
+    @ObservedObject var viewModel: ThirukkuralViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Kural")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    if let (chapter, book) = viewModel.getChapterAndBookForKural(kural.Number) {
+                        Text(book)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(chapter)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Text("Kural \(kural.Number)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
                 Button(action: {
                     favoriteManager.toggleKuralFavorite(kuralNumber: kural.Number)
@@ -42,7 +53,7 @@ struct KuralCard: View {
                     .font(.headline)
             }
             
-            Text("Porul")
+            Text("Meaning")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             Text(kural.Translation)

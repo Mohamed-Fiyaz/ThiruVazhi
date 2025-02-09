@@ -10,6 +10,8 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var text: String
+    let onSearch: (String) -> Void
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         HStack {
@@ -18,10 +20,15 @@ struct SearchBar: View {
             
             TextField("Search", text: $text)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .focused($isFocused)
+                .onChange(of: text) { newValue in
+                    onSearch(newValue)
+                }
             
             if !text.isEmpty {
                 Button(action: {
                     text = ""
+                    onSearch("")
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
@@ -29,5 +36,11 @@ struct SearchBar: View {
             }
         }
         .padding(.horizontal)
+        .gesture(
+            TapGesture()
+                .onEnded { _ in
+                    isFocused = false
+                }
+        )
     }
 }

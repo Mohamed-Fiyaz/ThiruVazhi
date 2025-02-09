@@ -25,7 +25,7 @@ struct ChapterDetailView: View {
                     .padding(.top)
                 
                 ForEach(chapterKurals) { kural in
-                    KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                    KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
                 }
             }
             .padding()

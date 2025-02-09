@@ -19,7 +19,9 @@ struct FavoritesView: View {
     var favoriteChapters: [Chapter] {
         guard let details = viewModel.details else { return [] }
         return details.section.detail.flatMap { book in
-            book.chapterGroup.detail.filter { favoriteManager.favoriteChapters.contains($0.number) }
+            book.chapterGroup.detail.flatMap { group in
+                group.chapters.detail.filter { favoriteManager.favoriteChapters.contains($0.number) }
+            }
         }
     }
     
@@ -31,8 +33,19 @@ struct FavoritesView: View {
                         .font(.title2)
                         .padding(.horizontal)
                     
-                    ForEach(favoriteKurals) { kural in
-                        KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                    ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 5))) { kural in
+                        KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                    }
+                    
+                    if favoriteKurals.count > 5 {
+                        Button(action: {
+                            viewModel.expandedFavoriteKurals.toggle()
+                        }) {
+                            Text(viewModel.expandedFavoriteKurals ? "Show Less" : "Show More")
+                                .foregroundColor(AppColors.primaryRed)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                 }
                 
@@ -41,8 +54,19 @@ struct FavoritesView: View {
                         .font(.title2)
                         .padding(.horizontal)
                     
-                    ForEach(favoriteChapters) { chapter in
+                    ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 5))) { chapter in
                         ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                    }
+                    
+                    if favoriteChapters.count > 5 {
+                        Button(action: {
+                            viewModel.expandedFavoriteChapters.toggle()
+                        }) {
+                            Text(viewModel.expandedFavoriteChapters ? "Show Less" : "Show More")
+                                .foregroundColor(AppColors.primaryRed)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                 }
                 
