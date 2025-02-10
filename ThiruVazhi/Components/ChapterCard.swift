@@ -5,7 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct ChapterCard: View {
@@ -16,25 +15,43 @@ struct ChapterCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(chapter.translation)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(chapter.translation)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                    
+                    if showTamilText {
+                        Text(chapter.name)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text(chapter.transliteration)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
+                
                 Button(action: {
                     favoriteManager.toggleChapterFavorite(chapterNumber: chapter.number)
                 }) {
                     Image(systemName: favoriteManager.favoriteChapters.contains(chapter.number) ? "star.fill" : "star")
+                        .foregroundColor(favoriteManager.favoriteChapters.contains(chapter.number) ? .yellow : .gray)
                 }
             }
             
-            if showTamilText {
-                Text(chapter.name)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
+            Text("Chapter \(chapter.number)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.top, 4)
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(AppColors.cardBg)
         .cornerRadius(10)
-        .shadow(radius: 2)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(AppColors.cardStroke, lineWidth: 1)
+        )
     }
 }
