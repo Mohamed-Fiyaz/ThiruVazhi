@@ -27,20 +27,21 @@ struct ChapterDetailView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .foregroundColor(AppColors.goldText)
                 }
                 .padding(.leading)
-                
-                Spacer()
-                
-                Text(chapter.translation)
-                    .font(.headline)
-                    .foregroundColor(AppColors.goldText)
-                
+                    .foregroundColor(.black)
+                    HStack {
+                        Spacer()
+                        Text("Show Tamil Text")
+                        Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
+                            .labelsHidden()
+                            .tint(AppColors.primaryRed)
+                    }
+                    .foregroundColor(.black)
+
                 Spacer()
             }
             .padding(.vertical, 12)
-            .background(AppColors.primaryRed)
             
             ScrollView {
                 VStack(spacing: 16) {
@@ -50,7 +51,7 @@ struct ChapterDetailView: View {
                                 .font(.title2)
                                 .fontWeight(.bold)
                         }
-                        Text(chapter.transliteration)
+                        Text(chapter.translation)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Text("Chapter \(chapter.number)")
@@ -59,10 +60,8 @@ struct ChapterDetailView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(AppColors.cardBg)
                     .cornerRadius(10)
                     .padding(.horizontal)
-                    .padding(.top)
                     
                     VStack(spacing: 16) {
                         ForEach(chapterKurals) { kural in
