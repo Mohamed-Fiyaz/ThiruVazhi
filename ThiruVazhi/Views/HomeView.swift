@@ -5,10 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
-import SwiftUI
-
-import Foundation
 import SwiftUI
 
 struct HomeView: View {
@@ -32,7 +28,7 @@ struct HomeView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.black)
                     
-                    KuralCard(kural: kuralOfDay, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                    KuralCard(kural: kuralOfDay, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel, hideChapterInfo: false)
                 }
                 
                 if let randomKural = viewModel.randomKural {
@@ -40,7 +36,7 @@ struct HomeView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundColor(.black)
-                    KuralCard(kural: randomKural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                    KuralCard(kural: randomKural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel, hideChapterInfo: false)
                 }
                 
                 Button(action: {

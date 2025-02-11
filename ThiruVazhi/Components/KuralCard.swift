@@ -5,7 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct KuralCard: View {
@@ -13,21 +12,30 @@ struct KuralCard: View {
     let showTamilText: Bool
     @ObservedObject var favoriteManager: FavoriteManager
     @ObservedObject var viewModel: ThirukkuralViewModel
+    let hideChapterInfo: Bool
+    
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    if let (chapter, book) = viewModel.getChapterAndBookForKural(kural.Number) {
-                        Text("Book: \(book)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("Chapter: \(chapter)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    if !hideChapterInfo {
+                        if let (chapter, book) = viewModel.getChapterAndBookForKural(kural.Number) {
+                            Text("Book: \(book)")
+                                .font(.system(size: fontSize(12)))
+                                .foregroundColor(.secondary)
+                            Text("Chapter: \(chapter)")
+                                .font(.system(size: fontSize(12)))
+                                .foregroundColor(.secondary)
+                        }
                     }
                     Text("Kural \(kural.Number)")
-                        .font(.subheadline)
+                        .font(.system(size: fontSize(14)))
                         .foregroundColor(.secondary)
                 }
                 Spacer()
@@ -35,22 +43,31 @@ struct KuralCard: View {
                     favoriteManager.toggleKuralFavorite(kuralNumber: kural.Number)
                 }) {
                     Image(systemName: favoriteManager.favoriteKurals.contains(kural.Number) ? "star.fill" : "star")
-                            .foregroundColor(favoriteManager.favoriteKurals.contains(kural.Number) ? .yellow : .gray)
-                    }
+                        .foregroundColor(favoriteManager.favoriteKurals.contains(kural.Number) ? .yellow : .gray)
+                        .font(.system(size: fontSize(16)))
                 }
+            }
             
             if showTamilText {
                 Text(kural.Line1)
-                    .font(.headline)
+                    .font(.system(size: fontSize(16)))
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
                 Text(kural.Line2)
-                    .font(.headline)
+                    .font(.system(size: fontSize(16)))
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
             }
             
             Text("Meaning")
-                .font(.subheadline)
+                .font(.system(size: fontSize(14)))
                 .foregroundColor(.secondary)
             Text(kural.Translation)
-                .font(.body)
+                .font(.system(size: fontSize(15)))
+                .lineLimit(3)
+                .minimumScaleFactor(0.8)
         }
         .padding()
         .background(AppColors.cardBg)

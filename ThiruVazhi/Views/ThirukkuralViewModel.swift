@@ -5,7 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
 import SwiftUI
 import Combine
 
@@ -65,7 +64,7 @@ class ThirukkuralViewModel: ObservableObject {
     init() {
         loadData()
         setKuralOfTheDay()
-        generateRandomKural() // Generate initial random Kural during initialization
+        generateRandomKural()
     }
     
     private func loadData() {
@@ -85,7 +84,6 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     func generateRandomKural() {
-        // Ensure we don't select the same Kural as the Kural of the day
         var newRandomKural = kurals.randomElement()
         while newRandomKural?.Number == kuralOfTheDay?.Number {
             newRandomKural = kurals.randomElement()

@@ -5,7 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct CustomTabBar: View {

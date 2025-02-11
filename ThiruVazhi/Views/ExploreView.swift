@@ -40,7 +40,7 @@ struct ExploreView: View {
                                 .padding(.horizontal)
                             
                             ForEach(viewModel.filteredKurals) { kural in
-                                KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                                KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel, hideChapterInfo: false)
                             }
                         } else {
                             Text("No results found")

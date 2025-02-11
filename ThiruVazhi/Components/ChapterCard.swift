@@ -12,41 +12,50 @@ struct ChapterCard: View {
     let showTamilText: Bool
     @ObservedObject var favoriteManager: FavoriteManager
     
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(chapter.translation)
-                        .font(.headline)
+                        .font(.system(size: fontSize(16)))
+                        .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .lineLimit(2)
+                        .frame(height: 44)
                     
                     if showTamilText {
                         Text(chapter.name)
-                            .font(.subheadline)
+                            .font(.system(size: fontSize(14)))
                             .foregroundColor(.secondary)
+                            .lineLimit(1)
                     }
-                    
-                    Text(chapter.transliteration)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Button(action: {
                     favoriteManager.toggleChapterFavorite(chapterNumber: chapter.number)
                 }) {
                     Image(systemName: favoriteManager.favoriteChapters.contains(chapter.number) ? "star.fill" : "star")
                         .foregroundColor(favoriteManager.favoriteChapters.contains(chapter.number) ? .yellow : .gray)
+                        .font(.system(size: fontSize(16)))
                 }
             }
             
+            Spacer(minLength: 4)
+            
             Text("Chapter \(chapter.number)")
-                .font(.caption)
+                .font(.system(size: fontSize(12)))
                 .foregroundColor(.secondary)
-                .padding(.top, 4)
         }
         .padding()
+        .frame(height: showTamilText ? 140 : 110) 
+        .frame(maxWidth: .infinity)
         .background(AppColors.cardBg)
         .cornerRadius(10)
         .overlay(

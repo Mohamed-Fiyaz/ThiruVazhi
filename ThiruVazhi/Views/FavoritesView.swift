@@ -5,7 +5,6 @@
 //  Created by Mohamed Fiyaz on 09/02/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct FavoritesView: View {
@@ -34,7 +33,12 @@ struct FavoritesView: View {
                         .padding(.horizontal)
                     
                     ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 5))) { kural in
-                        KuralCard(kural: kural, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager, viewModel: viewModel)
+                        KuralCard(kural: kural,
+                                showTamilText: viewModel.showTamilText,
+                                favoriteManager: favoriteManager,
+                                viewModel: viewModel,
+                                hideChapterInfo: false)
+                            .padding(.horizontal)
                     }
                     
                     if favoriteKurals.count > 5 {
@@ -54,11 +58,16 @@ struct FavoritesView: View {
                         .font(.title2)
                         .padding(.horizontal)
                     
-                    ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 5))) { chapter in
-                        ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                        ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 6))) { chapter in
+                            ChapterCard(chapter: chapter,
+                                      showTamilText: viewModel.showTamilText,
+                                      favoriteManager: favoriteManager)
+                        }
                     }
+                    .padding(.horizontal)
                     
-                    if favoriteChapters.count > 5 {
+                    if favoriteChapters.count > 6 {
                         Button(action: {
                             viewModel.expandedFavoriteChapters.toggle()
                         }) {
@@ -78,7 +87,7 @@ struct FavoritesView: View {
                         .padding()
                 }
             }
-            .padding()
+            .padding(.vertical)
         }
     }
 }
