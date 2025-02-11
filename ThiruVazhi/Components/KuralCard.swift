@@ -19,10 +19,10 @@ struct KuralCard: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     if let (chapter, book) = viewModel.getChapterAndBookForKural(kural.Number) {
-                        Text(book)
+                        Text("Book: \(book)")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text(chapter)
+                        Text("Chapter: \(chapter)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -34,17 +34,10 @@ struct KuralCard: View {
                 Button(action: {
                     favoriteManager.toggleKuralFavorite(kuralNumber: kural.Number)
                 }) {
-                    ZStack {
-                        Image(systemName: "star")
-                            .font(.system(size: 25))
-                            .foregroundColor(AppColors.cardStroke)
-                        if favoriteManager.favoriteKurals.contains(kural.Number) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-                        }
+                    Image(systemName: favoriteManager.favoriteKurals.contains(kural.Number) ? "star.fill" : "star")
+                            .foregroundColor(favoriteManager.favoriteKurals.contains(kural.Number) ? .yellow : .gray)
                     }
                 }
-            }
             
             if showTamilText {
                 Text(kural.Line1)
