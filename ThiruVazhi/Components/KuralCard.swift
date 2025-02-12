@@ -59,12 +59,21 @@ struct KuralCard: View {
                     .fontWeight(.semibold)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
+                Text("Translation")
+                    .font(.system(size: fontSize(14)))
+                    .foregroundColor(.secondary)
             }
+
+            Text(kural.Translation)
+                .font(.system(size: fontSize(16)))
+                .fontWeight(.semibold)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
             
             Text("Meaning")
                 .font(.system(size: fontSize(14)))
                 .foregroundColor(.secondary)
-            Text(kural.Translation)
+            Text(kural.explanation)
                 .font(.system(size: fontSize(15)))
                 .lineLimit(3)
                 .minimumScaleFactor(0.8)

@@ -29,7 +29,7 @@ struct ExploreView: View {
             SearchBar(text: $searchText) { query in
                 viewModel.performSearch(query: query)
             }
-            .padding(.top, 20)
+            .padding()
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
