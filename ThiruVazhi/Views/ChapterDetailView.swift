@@ -27,6 +27,7 @@ struct ChapterDetailView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
+                    .foregroundColor(AppColors.primaryRed)
                 }
                 .padding(.leading)
                     .foregroundColor(.black)

@@ -62,7 +62,30 @@ struct ExploreView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if selectedTheme == nil {
+            if selectedTheme != nil {
+                // Fixed Header with Back Button and Toggle
+                HStack {
+                    Button(action: {
+                        selectedTheme = nil
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .foregroundColor(AppColors.primaryRed)
+                    }
+                    .padding(.leading)
+                    
+                    Spacer()
+                    
+                    Text("Show Tamil Text")
+                    Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
+                        .labelsHidden()
+                        .tint(AppColors.primaryRed)
+                        .padding(.trailing)
+                }
+                .padding(.vertical, 12)
+            } else {
                 SearchBar(text: $searchText) { query in
                     viewModel.performSearch(query: query)
                 }
@@ -72,20 +95,6 @@ struct ExploreView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     if let theme = selectedTheme {
-                        HStack {
-                            Button(action: {
-                                selectedTheme = nil
-                            }) {
-                                HStack {
-                                    Image(systemName: "chevron.left")
-                                    Text("Back to Themes")
-                                }
-                                .foregroundColor(AppColors.primaryRed)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
                         Text(theme.title)
                             .font(.title2)
                             .fontWeight(.bold)
