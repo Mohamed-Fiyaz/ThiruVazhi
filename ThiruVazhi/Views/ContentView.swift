@@ -35,7 +35,9 @@ struct ContentView: View {
                     .tag(3)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            
+            .onAppear {
+                  UIScrollView.appearance().isScrollEnabled = false
+            }
             CustomTabBar(selectedTab: $selectedTab)
         }
         .preferredColorScheme(.light)
