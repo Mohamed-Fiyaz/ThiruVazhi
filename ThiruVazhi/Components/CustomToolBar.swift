@@ -39,11 +39,11 @@ struct TabBarButton: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     
     private var iconSize: CGFloat {
-        sizeClass == .regular ? 24 : 20 // Bigger icons for iPad
+        UIDevice.current.userInterfaceIdiom == .pad ? 24 : 20 // Scale only for iPads
     }
     
     private var textSize: CGFloat {
-        sizeClass == .regular ? 14 : 12 // Bigger text for iPad
+        UIDevice.current.userInterfaceIdiom == .pad ? 14 : 12 // Scale only for iPads
     }
     
     var body: some View {
@@ -56,8 +56,7 @@ struct TabBarButton: View {
                 Text(title)
                     .font(.system(size: textSize))
                     .foregroundColor(isSelected ? AppColors.goldText : .gray)
-                    .animation(.easeInOut(duration: 0.1
-                                         ), value: isSelected)
+                    .animation(.easeInOut(duration: 0.1), value: isSelected)
             }
         }
         .frame(maxWidth: .infinity)

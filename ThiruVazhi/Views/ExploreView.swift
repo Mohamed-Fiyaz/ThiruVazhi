@@ -12,11 +12,15 @@ struct ExploreView: View {
     @ObservedObject var favoriteManager: FavoriteManager
     @State private var searchText = ""
     @State private var selectedTheme: Theme?
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     private func fontSize(_ size: CGFloat) -> CGFloat {
-        sizeClass == .regular ? size * 1.3 : size
+        if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+            return size * 1.3  // Scale only for iPads
+        }
+        return size
     }
+
     
     struct Theme: Identifiable {
         let id = UUID()

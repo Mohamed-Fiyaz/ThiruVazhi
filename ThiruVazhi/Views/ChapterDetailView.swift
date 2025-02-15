@@ -12,11 +12,15 @@ struct ChapterDetailView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.presentationMode) var presentationMode
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     private func fontSize(_ size: CGFloat) -> CGFloat {
-        sizeClass == .regular ? size * 1.3 : size
+        if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+            return size * 1.3  // Scale only for iPads
+        }
+        return size
     }
+
     
     var chapterKurals: [Kural] {
         viewModel.kurals.filter { $0.Number >= chapter.start && $0.Number <= chapter.end }
