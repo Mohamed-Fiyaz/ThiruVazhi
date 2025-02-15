@@ -12,6 +12,11 @@ struct ChaptersView: View {
     @ObservedObject var favoriteManager: FavoriteManager
     @State private var selectedBook = "Virtue"
     @State private var searchText = ""
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var filteredChapters: [Chapter] {
         guard let details = viewModel.details else { return [] }
@@ -37,7 +42,7 @@ struct ChaptersView: View {
         NavigationView {
             VStack(spacing: 16) {
                 Text("Select a Book")
-                    .font(.title2)
+                    .font(.system(size: fontSize(22)))
                     .fontWeight(.semibold)
                     .padding(.top, 20)
                 
@@ -47,6 +52,7 @@ struct ChaptersView: View {
                             selectedBook = book
                         }) {
                             Text(book)
+                                .font(.system(size: fontSize(16)))
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                                 .background(selectedBook == book ? AppColors.primaryRed : Color.clear)

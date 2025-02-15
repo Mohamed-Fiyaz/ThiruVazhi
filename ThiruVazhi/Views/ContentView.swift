@@ -11,13 +11,18 @@ struct ContentView: View {
     @StateObject private var viewModel = ThirukkuralViewModel()
     @StateObject private var favoriteManager = FavoriteManager()
     @State private var selectedTab = 0
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Spacer()
                 Text("ThiruVazhi")
-                    .font(.custom("PatrickHand-Regular", size: 36))
+                    .font(.custom("PatrickHand-Regular", size: fontSize(36)))
                     .foregroundColor(AppColors.goldText)
                     .padding()
                 Spacer()

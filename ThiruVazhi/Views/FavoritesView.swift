@@ -10,6 +10,11 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var favoriteKurals: [Kural] {
         viewModel.kurals.filter { favoriteManager.favoriteKurals.contains($0.Number) }
@@ -29,10 +34,11 @@ struct FavoritesView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if !favoriteKurals.isEmpty {
                     Text("Favorite Thirukkurals")
-                        .font(.title2)
+                        .font(.system(size: fontSize(22)))
+                        .fontWeight(.semibold)
                         .padding(.horizontal)
                     
-                    ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 5))) { kural in
+                    ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 3))) { kural in
                         KuralCard(kural: kural,
                                 showTamilText: viewModel.showTamilText,
                                 favoriteManager: favoriteManager,
@@ -41,7 +47,7 @@ struct FavoritesView: View {
                             .padding(.horizontal)
                     }
                     
-                    if favoriteKurals.count > 5 {
+                    if favoriteKurals.count > 3 {
                         Button(action: {
                             viewModel.expandedFavoriteKurals.toggle()
                         }) {
@@ -55,7 +61,8 @@ struct FavoritesView: View {
                 
                 if !favoriteChapters.isEmpty {
                     Text("Favorite Chapters")
-                        .font(.title2)
+                        .font(.system(size: fontSize(22)))
+                        .fontWeight(.semibold)
                         .padding(.horizontal)
                     
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
@@ -81,7 +88,7 @@ struct FavoritesView: View {
                 
                 if favoriteKurals.isEmpty && favoriteChapters.isEmpty {
                     Text("No favorites yet")
-                        .font(.headline)
+                        .font(.system(size: fontSize(17)))
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()

@@ -12,6 +12,11 @@ struct ExploreView: View {
     @ObservedObject var favoriteManager: FavoriteManager
     @State private var searchText = ""
     @State private var selectedTheme: Theme?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     struct Theme: Identifiable {
         let id = UUID()
@@ -96,7 +101,7 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     if let theme = selectedTheme {
                         Text(theme.title)
-                            .font(.title2)
+                            .font(.system(size: fontSize(22)))
                             .fontWeight(.bold)
                             .padding(.horizontal)
                         
@@ -111,7 +116,7 @@ struct ExploreView: View {
                     } else if !searchText.isEmpty {
                         if !filteredKurals.isEmpty {
                             Text("Search Results")
-                                .font(.headline)
+                                .font(.system(size: fontSize(17)))
                                 .padding(.horizontal)
                             
                             ForEach(filteredKurals) { kural in
@@ -124,13 +129,14 @@ struct ExploreView: View {
                             }
                         } else {
                             Text("No results found")
-                                .font(.headline)
+                                .font(.system(size: fontSize(17)))
                                 .foregroundColor(.secondary)
                                 .padding()
                         }
                     } else {
                         Text("Themes")
-                            .font(.headline)
+                            .font(.system(size: fontSize(22)))
+                            .fontWeight(.semibold)
                             .padding(.horizontal)
                         
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {

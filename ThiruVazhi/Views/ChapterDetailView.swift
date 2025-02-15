@@ -12,6 +12,11 @@ struct ChapterDetailView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var chapterKurals: [Kural] {
         viewModel.kurals.filter { $0.Number >= chapter.start && $0.Number <= chapter.end }
@@ -49,14 +54,14 @@ struct ChapterDetailView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         if viewModel.showTamilText {
                             Text(chapter.name)
-                                .font(.title2)
+                                .font(.system(size: fontSize(22)))
                                 .fontWeight(.bold)
                         }
                         Text(chapter.translation)
-                            .font(.subheadline)
+                            .font(.system(size: fontSize(15)))
                             .foregroundColor(.secondary)
                         Text("Chapter \(chapter.number)")
-                            .font(.caption)
+                            .font(.system(size: fontSize(12)))
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

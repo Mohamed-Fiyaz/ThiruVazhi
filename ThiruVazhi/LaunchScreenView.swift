@@ -9,16 +9,21 @@ import SwiftUI
 
 struct LaunchScreenView: View {
     @Binding var isActive: Bool
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        sizeClass == .regular ? size * 1.3 : size
+    }
     
     var body: some View {
         VStack {
             Spacer()
             Text("ThiruVazhi")
-                .font(.custom("PatrickHand-Regular", size: 48))
+                .font(.custom("PatrickHand-Regular", size: fontSize(48)))
                 .foregroundColor(AppColors.goldText)
             Spacer()
             Text("Made by Mohamed Fiyaz")
-                .font(.system(size: 16))
+                .font(.system(size: fontSize(16)))
                 .foregroundColor(AppColors.goldText)
                 .padding(.bottom, 30)
         }
