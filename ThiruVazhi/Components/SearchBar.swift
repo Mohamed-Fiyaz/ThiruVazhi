@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var text: String
     let onSearch: (String) -> Void
-    @FocusState.Binding var isFocused: Bool // ✅ Change to `.Binding`
+    @FocusState.Binding var isFocused: Bool
     
     var body: some View {
         HStack {
@@ -20,7 +20,7 @@ struct SearchBar: View {
                     .padding(.leading, 8)
                 
                 TextField("Search", text: $text)
-                    .focused($isFocused) // ✅ No change needed
+                    .focused($isFocused) 
                     .onChange(of: text) { newValue in
                         onSearch(newValue)
                     }

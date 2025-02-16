@@ -7,37 +7,46 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct ChaptersView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
-    @State private var selectedBook = "Virtue"
+    @State private var selectedBook = "All" 
     @State private var searchText = ""
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @FocusState private var isSearchFocused: Bool  // Add this
-
+    @FocusState private var isSearchFocused: Bool
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3  // Scale only for iPads
+            return size * 1.3
         }
         return size
     }
-
     
     var filteredChapters: [Chapter] {
         guard let details = viewModel.details else { return [] }
-        let chapters = details.section.detail
-            .filter { $0.translation == selectedBook }
-            .flatMap { book in
-                book.chapterGroup.detail.flatMap { group in
-                    group.chapters.detail
-                }
+        let allChapters = details.section.detail.flatMap { book in
+            book.chapterGroup.detail.flatMap { group in
+                group.chapters.detail
             }
-        
-        if searchText.isEmpty {
-            return chapters
         }
         
-        return chapters.filter { chapter in
+        let filteredByBook = selectedBook == "All"
+            ? allChapters
+            : details.section.detail
+                .filter { $0.translation == selectedBook }
+                .flatMap { book in
+                    book.chapterGroup.detail.flatMap { group in
+                        group.chapters.detail
+                    }
+                }
+        
+        if searchText.isEmpty {
+            return filteredByBook
+        }
+        
+        return filteredByBook.filter { chapter in
             chapter.translation.localizedCaseInsensitiveContains(searchText) ||
             chapter.transliteration.localizedCaseInsensitiveContains(searchText)
         }
@@ -52,7 +61,7 @@ struct ChaptersView: View {
                     .padding(.top, 20)
                 
                 HStack(spacing: 12) {
-                    ForEach(["Virtue", "Wealth", "Love"], id: \.self) { book in
+                    ForEach(["All", "Virtue", "Wealth", "Love"], id: \.self) { book in
                         Button(action: {
                             selectedBook = book
                         }) {
@@ -78,7 +87,7 @@ struct ChaptersView: View {
                                     ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
                                 }
                                 .id(chapter.number)
-                            }.padding(.top,2)
+                            }.padding(.top, 2)
                         }
                         .padding()
                         .onChange(of: selectedBook) { _ in

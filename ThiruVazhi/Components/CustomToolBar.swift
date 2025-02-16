@@ -39,11 +39,11 @@ struct TabBarButton: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     
     private var iconSize: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .pad ? 24 : 20 // Scale only for iPads
+        UIDevice.current.userInterfaceIdiom == .pad ? 24 : 20
     }
     
     private var textSize: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .pad ? 14 : 12 // Scale only for iPads
+        UIDevice.current.userInterfaceIdiom == .pad ? 14 : 12
     }
     
     var body: some View {
@@ -64,7 +64,6 @@ struct TabBarButton: View {
     }
 }
 
-// Add this new button style for immediate feedback
 struct TabBarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

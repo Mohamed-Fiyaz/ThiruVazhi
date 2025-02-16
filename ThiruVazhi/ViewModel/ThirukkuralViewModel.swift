@@ -22,7 +22,7 @@ class ThirukkuralViewModel: ObservableObject {
 
     private var searchWorkItem: DispatchWorkItem?
     private var searchIndex: [(kural: Kural, searchText: String)] = []
-    private let famousKuralNumbers = [1, 2, 7, 10, 37, 391, 425, 426, 513, 1103]
+    private let famousKuralNumbers = [1, 12, 45, 396, 400, 421, 596, 619, 664, 666]
 
     func getChapterAndBookForKural(_ kuralNumber: Int) -> (chapterName: String, bookName: String)? {
         guard let details = details else { return nil }
@@ -48,7 +48,6 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     private func setupSearchIndex() {
-        // Create a pre-processed search index
         searchIndex = kurals.map { kural in
             let searchText = "\(kural.Translation.lowercased()) \(kural.explanation.lowercased())"
             return (kural: kural, searchText: searchText)
@@ -63,13 +62,13 @@ class ThirukkuralViewModel: ObservableObject {
         searchWorkItem?.cancel()
         
         DispatchQueue.main.async {
-            self.isSearching = true  // Start loading animation
+            self.isSearching = true
         }
 
         if query.isEmpty {
             DispatchQueue.main.async {
                 self.filteredKurals = []
-                self.isSearching = false  // Stop loading since no search is needed
+                self.isSearching = false
             }
             return
         }
@@ -77,7 +76,7 @@ class ThirukkuralViewModel: ObservableObject {
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self else { return }
             
-            Thread.sleep(forTimeInterval: 0.3)  // Simulate delay for better UI response
+            Thread.sleep(forTimeInterval: 0.3)
             
             let lowercasedQuery = query.lowercased()
             let results = self.searchIndex
@@ -87,7 +86,7 @@ class ThirukkuralViewModel: ObservableObject {
             
             DispatchQueue.main.async {
                 self.filteredKurals = Array(results)
-                self.isSearching = false  // Stop loading when results are ready
+                self.isSearching = false
             }
         }
         

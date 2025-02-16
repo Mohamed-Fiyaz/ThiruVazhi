@@ -13,7 +13,7 @@ struct LaunchScreenView: View {
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3  // Scale only for iPads
+            return size * 1.3  
         }
         return size
     }
