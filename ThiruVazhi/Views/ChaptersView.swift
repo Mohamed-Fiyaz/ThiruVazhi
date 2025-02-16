@@ -13,6 +13,7 @@ struct ChaptersView: View {
     @State private var selectedBook = "Virtue"
     @State private var searchText = ""
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @FocusState private var isSearchFocused: Bool  // Add this
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -66,7 +67,7 @@ struct ChaptersView: View {
                     }
                 }
                 
-                SearchBar(text: $searchText) { _ in }
+                SearchBar(text: $searchText, onSearch: { _ in }, isFocused: $isSearchFocused)
                     .padding(.horizontal)
                 
                 ScrollView {
@@ -88,7 +89,9 @@ struct ChaptersView: View {
                     }
                 }
             }
+            .background(AppColors.primaryBG)
             .onTapGesture {
+                isSearchFocused = false
                 hideKeyboard()
             }
         }

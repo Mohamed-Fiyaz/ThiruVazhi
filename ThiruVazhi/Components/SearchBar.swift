@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var text: String
     let onSearch: (String) -> Void
-    @FocusState private var isFocused: Bool
+    @FocusState.Binding var isFocused: Bool // ✅ Change to `.Binding`
     
     var body: some View {
         HStack {
@@ -20,36 +20,39 @@ struct SearchBar: View {
                     .padding(.leading, 8)
                 
                 TextField("Search", text: $text)
-                    .focused($isFocused)
+                    .focused($isFocused) // ✅ No change needed
                     .onChange(of: text) { newValue in
                         onSearch(newValue)
                     }
                 
                 if !text.isEmpty {
                     Button(action: {
-                        text = ""
-                        onSearch("")
+                        DispatchQueue.main.async {
+                            text = ""
+                            onSearch("")
+                        }
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.gray)
                     }
                     .padding(.trailing, 8)
+
                 }
             }
             .padding(.vertical, 8)
-            .background(Color(.systemGray6))
+            .background(Color(.white))
             .cornerRadius(10)
             
             if isFocused {
                 Button("Cancel") {
+                    text = ""
                     isFocused = false
+                    onSearch("")
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                                  to: nil, from: nil, for: nil)
                 }
                 .foregroundColor(AppColors.primaryRed)
-                .transition(.move(edge: .trailing))
             }
         }
-        .animation(.default, value: isFocused)
     }
 }

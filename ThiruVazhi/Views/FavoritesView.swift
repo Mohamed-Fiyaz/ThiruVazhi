@@ -99,6 +99,7 @@ struct FavoritesView: View {
                 }
             }
             .padding(.vertical)
+            .background(AppColors.primaryBG)
         }
     }
 }

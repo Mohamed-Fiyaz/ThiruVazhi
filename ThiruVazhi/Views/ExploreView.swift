@@ -13,6 +13,8 @@ struct ExploreView: View {
     @State private var searchText = ""
     @State private var selectedTheme: Theme?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var isSearching = false
+    @FocusState private var isSearchFocused: Bool
     
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -20,7 +22,7 @@ struct ExploreView: View {
         }
         return size
     }
-
+    
     
     struct Theme: Identifiable {
         let id = UUID()
@@ -72,7 +74,6 @@ struct ExploreView: View {
     var body: some View {
         VStack(spacing: 0) {
             if selectedTheme != nil {
-                // Fixed Header with Back Button and Toggle
                 HStack {
                     Button(action: {
                         selectedTheme = nil
@@ -95,9 +96,10 @@ struct ExploreView: View {
                 }
                 .padding(.vertical, 12)
             } else {
-                SearchBar(text: $searchText) { query in
+                SearchBar(text: $searchText, onSearch: { query in
+                    isSearching = true
                     viewModel.performSearch(query: query)
-                }
+                }, isFocused: $isSearchFocused)
                 .padding()
             }
             
@@ -111,25 +113,35 @@ struct ExploreView: View {
                         
                         ForEach(filteredKurals) { kural in
                             KuralCard(kural: kural,
-                                    showTamilText: viewModel.showTamilText,
-                                    favoriteManager: favoriteManager,
-                                    viewModel: viewModel,
-                                    hideChapterInfo: false)
-                                .padding(.horizontal)
+                                      showTamilText: viewModel.showTamilText,
+                                      favoriteManager: favoriteManager,
+                                      viewModel: viewModel,
+                                      hideChapterInfo: false)
+                            .padding(.horizontal)
                         }
                     } else if !searchText.isEmpty {
-                        if !filteredKurals.isEmpty {
+                        if viewModel.isSearching {
+                            HStack {
+                                Spacer()
+                                ProgressView("Searching...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .tint(AppColors.primaryRed)
+                                    .foregroundColor(AppColors.primaryRed)
+                                    .padding()
+                                Spacer()
+                            }
+                        } else if !filteredKurals.isEmpty {
                             Text("Search Results")
                                 .font(.system(size: fontSize(17)))
                                 .padding(.horizontal)
                             
                             ForEach(filteredKurals) { kural in
                                 KuralCard(kural: kural,
-                                        showTamilText: viewModel.showTamilText,
-                                        favoriteManager: favoriteManager,
-                                        viewModel: viewModel,
-                                        hideChapterInfo: false)
-                                    .padding(.horizontal)
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: false)
+                                .padding(.horizontal)
                             }
                         } else {
                             Text("No results found")
@@ -137,7 +149,10 @@ struct ExploreView: View {
                                 .foregroundColor(.secondary)
                                 .padding()
                         }
-                    } else {
+                    }
+                    
+                    
+                    else {
                         Text("Themes")
                             .font(.system(size: fontSize(22)))
                             .fontWeight(.semibold)
@@ -170,6 +185,7 @@ struct ExploreView: View {
                 .padding(.vertical)
             }
         }
+        .background(AppColors.primaryBG)
         .onTapGesture {
             hideKeyboard()
         }

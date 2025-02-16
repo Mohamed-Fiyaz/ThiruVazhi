@@ -18,7 +18,8 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var expandedFavoriteChapters = false
     @Published var filteredKurals: [Kural] = []
     @Published var famousKurals: [Kural] = []
-    
+    @Published var isSearching = false
+
     private var searchWorkItem: DispatchWorkItem?
     private var searchIndex: [(kural: Kural, searchText: String)] = []
     private let famousKuralNumbers = [1, 2, 7, 10, 37, 391, 425, 426, 513, 1103]
@@ -59,12 +60,16 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     func performSearch(query: String) {
-        // Cancel any pending search
         searchWorkItem?.cancel()
         
+        DispatchQueue.main.async {
+            self.isSearching = true  // Start loading animation
+        }
+
         if query.isEmpty {
             DispatchQueue.main.async {
                 self.filteredKurals = []
+                self.isSearching = false  // Stop loading since no search is needed
             }
             return
         }
@@ -72,21 +77,25 @@ class ThirukkuralViewModel: ObservableObject {
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self else { return }
             
-            // Perform search on background thread
+            Thread.sleep(forTimeInterval: 0.3)  // Simulate delay for better UI response
+            
             let lowercasedQuery = query.lowercased()
             let results = self.searchIndex
                 .filter { $0.searchText.contains(lowercasedQuery) }
                 .map { $0.kural }
-                .prefix(50) // Limit results for better performance
+                .prefix(50)
             
             DispatchQueue.main.async {
                 self.filteredKurals = Array(results)
+                self.isSearching = false  // Stop loading when results are ready
             }
         }
         
         searchWorkItem = workItem
         DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
     }
+
+
     
     private func loadData() {
         if let kuralURL = Bundle.main.url(forResource: "thirukkural", withExtension: "json"),
