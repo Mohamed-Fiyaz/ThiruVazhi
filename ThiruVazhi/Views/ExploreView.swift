@@ -13,10 +13,10 @@ struct ExploreView: View {
     @State private var searchText = ""
     @State private var selectedTheme: Theme?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3  // Scale only for iPads
+            return size * 1.3
         }
         return size
     }
@@ -151,6 +151,20 @@ struct ExploreView: View {
                             }
                         }
                         .padding(.horizontal)
+                        Text("Famous Thirukkurals")
+                            .font(.system(size: fontSize(22)))
+                            .fontWeight(.semibold)
+                            .padding(.horizontal)
+                            .padding(.top)
+                        
+                        ForEach(viewModel.famousKurals) { kural in
+                            KuralCard(kural: kural,
+                                      showTamilText: viewModel.showTamilText,
+                                      favoriteManager: favoriteManager,
+                                      viewModel: viewModel,
+                                      hideChapterInfo: false)
+                            .padding(.horizontal)
+                        }
                     }
                 }
                 .padding(.vertical)

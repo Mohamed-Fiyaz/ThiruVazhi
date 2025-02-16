@@ -14,32 +14,42 @@ struct SearchBar: View {
     
     var body: some View {
         HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
-            
-            TextField("Search", text: $text)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .focused($isFocused)
-                .onChange(of: text) { newValue in
-                    onSearch(newValue)
-                }
-            
-            if !text.isEmpty {
-                Button(action: {
-                    text = ""
-                    onSearch("")
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                    .padding(.leading, 8)
+                
+                TextField("Search", text: $text)
+                    .focused($isFocused)
+                    .onChange(of: text) { newValue in
+                        onSearch(newValue)
+                    }
+                
+                if !text.isEmpty {
+                    Button(action: {
+                        text = ""
+                        onSearch("")
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.trailing, 8)
                 }
             }
-        }
-        .padding(.horizontal)
-        .gesture(
-            TapGesture()
-                .onEnded { _ in
+            .padding(.vertical, 8)
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
+            
+            if isFocused {
+                Button("Cancel") {
                     isFocused = false
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                                 to: nil, from: nil, for: nil)
                 }
-        )
+                .foregroundColor(AppColors.primaryRed)
+                .transition(.move(edge: .trailing))
+            }
+        }
+        .animation(.default, value: isFocused)
     }
 }

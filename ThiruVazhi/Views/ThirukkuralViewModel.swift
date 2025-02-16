@@ -17,9 +17,12 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
     @Published var filteredKurals: [Kural] = []
+    @Published var famousKurals: [Kural] = []
     
     private var searchWorkItem: DispatchWorkItem?
-    
+    private var searchIndex: [(kural: Kural, searchText: String)] = []
+    private let famousKuralNumbers = [1, 2, 7, 10, 37, 391, 425, 426, 513, 1103]
+
     func getChapterAndBookForKural(_ kuralNumber: Int) -> (chapterName: String, bookName: String)? {
         guard let details = details else { return nil }
         
@@ -35,36 +38,54 @@ class ThirukkuralViewModel: ObservableObject {
         return nil
     }
     
-    func performSearch(query: String) {
-        searchWorkItem?.cancel()
-        
-        let workItem = DispatchWorkItem { [weak self] in
-            guard let self = self else { return }
-            if query.isEmpty {
-                DispatchQueue.main.async {
-                    self.filteredKurals = []
-                }
-                return
-            }
-            
-            let filtered = self.kurals.filter { kural in
-                kural.Translation.localizedCaseInsensitiveContains(query) ||
-                kural.explanation.localizedCaseInsensitiveContains(query)
-            }
-            
-            DispatchQueue.main.async {
-                self.filteredKurals = filtered
-            }
-        }
-        
-        searchWorkItem = workItem
-        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.3, execute: workItem)
-    }
-    
     init() {
         loadData()
         setKuralOfTheDay()
         generateRandomKural()
+        setupSearchIndex()
+        setupFamousKurals()
+    }
+    
+    private func setupSearchIndex() {
+        // Create a pre-processed search index
+        searchIndex = kurals.map { kural in
+            let searchText = "\(kural.Translation.lowercased()) \(kural.explanation.lowercased())"
+            return (kural: kural, searchText: searchText)
+        }
+    }
+    
+    private func setupFamousKurals() {
+        famousKurals = kurals.filter { famousKuralNumbers.contains($0.Number) }
+    }
+    
+    func performSearch(query: String) {
+        // Cancel any pending search
+        searchWorkItem?.cancel()
+        
+        if query.isEmpty {
+            DispatchQueue.main.async {
+                self.filteredKurals = []
+            }
+            return
+        }
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            
+            // Perform search on background thread
+            let lowercasedQuery = query.lowercased()
+            let results = self.searchIndex
+                .filter { $0.searchText.contains(lowercasedQuery) }
+                .map { $0.kural }
+                .prefix(50) // Limit results for better performance
+            
+            DispatchQueue.main.async {
+                self.filteredKurals = Array(results)
+            }
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
     }
     
     private func loadData() {
