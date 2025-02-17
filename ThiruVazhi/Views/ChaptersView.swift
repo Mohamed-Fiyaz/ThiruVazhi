@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ChaptersView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
@@ -16,7 +14,8 @@ struct ChaptersView: View {
     @State private var searchText = ""
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @FocusState private var isSearchFocused: Bool
-    
+    @State private var chaptersScrollProxy: ScrollViewProxy?
+
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
             return size * 1.3

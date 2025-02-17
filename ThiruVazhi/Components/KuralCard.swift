@@ -70,7 +70,7 @@ struct KuralCard: View {
 
             Text(kural.Translation)
                 .font(.system(size: fontSize(16)))
-                .fontWeight(.semibold)
+                .fontWeight(.medium)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
             

@@ -11,14 +11,16 @@ struct FavoritesView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
+    @State private var scrollProxy: ScrollViewProxy?
+    @State private var refreshing = false
+    @State private var selectedTab = 0
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3 
+            return size * 1.3
         }
         return size
     }
-
     
     var favoriteKurals: [Kural] {
         viewModel.kurals.filter { favoriteManager.favoriteKurals.contains($0.Number) }
@@ -34,72 +36,124 @@ struct FavoritesView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                if !favoriteKurals.isEmpty {
-                    Text("Favorite Thirukkurals")
-                        .font(.system(size: fontSize(22)))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal)
-                    
-                    ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 3))) { kural in
-                        KuralCard(kural: kural,
-                                showTamilText: viewModel.showTamilText,
-                                favoriteManager: favoriteManager,
-                                viewModel: viewModel,
-                                hideChapterInfo: false)
+        NavigationView {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Top anchor view for scroll-to-top
+                        Color.clear
+                            .frame(height: 0)
+                            .id("top")
+                        
+                        if !favoriteKurals.isEmpty {
+                            Text("Favorite Thirukkurals")
+                                .font(.system(size: fontSize(22)))
+                                .fontWeight(.semibold)
+                                .padding(.horizontal)
+                            
+                            ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 3))) { kural in
+                                KuralCard(kural: kural,
+                                        showTamilText: viewModel.showTamilText,
+                                        favoriteManager: favoriteManager,
+                                        viewModel: viewModel,
+                                        hideChapterInfo: false)
+                                    .padding(.horizontal)
+                            }
+                            
+                            if favoriteKurals.count > 3 {
+                                Button(action: {
+                                    viewModel.expandedFavoriteKurals.toggle()
+                                }) {
+                                    Text(viewModel.expandedFavoriteKurals ? "Show Less" : "Show More")
+                                        .foregroundColor(AppColors.primaryRed)
+                                        .padding(.vertical, 8)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
+                        }
+                        
+                        if !favoriteChapters.isEmpty {
+                            Text("Favorite Chapters")
+                                .font(.system(size: fontSize(22)))
+                                .fontWeight(.semibold)
+                                .padding(.horizontal)
+                            
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 6))) { chapter in
+                                    NavigationLink(destination: ChapterDetailView(chapter: chapter, viewModel: viewModel, favoriteManager: favoriteManager)) {
+                                        ChapterCard(chapter: chapter,
+                                                  showTamilText: viewModel.showTamilText,
+                                                  favoriteManager: favoriteManager)
+                                    }
+                                }
+                            }
                             .padding(.horizontal)
-                    }
-                    
-                    if favoriteKurals.count > 3 {
-                        Button(action: {
-                            viewModel.expandedFavoriteKurals.toggle()
-                        }) {
-                            Text(viewModel.expandedFavoriteKurals ? "Show Less" : "Show More")
-                                .foregroundColor(AppColors.primaryRed)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
+                            
+                            if favoriteChapters.count > 6 {
+                                Button(action: {
+                                    viewModel.expandedFavoriteChapters.toggle()
+                                }) {
+                                    Text(viewModel.expandedFavoriteChapters ? "Show Less" : "Show More")
+                                        .foregroundColor(AppColors.primaryRed)
+                                        .padding(.vertical, 8)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
                         }
+                        
+                        if favoriteKurals.isEmpty && favoriteChapters.isEmpty {
+                            Text("No favorites yet")
+                                .font(.system(size: fontSize(17)))
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .padding()
+                        }
+                    }
+                    .padding(.vertical)
+                }
+                .background(AppColors.primaryBG)
+                .refreshable {
+                    // Simulate refresh
+                    refreshing = true
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    refreshing = false
+                    
+                    // Scroll to top after refresh
+                    withAnimation {
+                        proxy.scrollTo("top", anchor: .top)
                     }
                 }
-                
-                if !favoriteChapters.isEmpty {
-                    Text("Favorite Chapters")
-                        .font(.system(size: fontSize(22)))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal)
-                    
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 6))) { chapter in
-                            ChapterCard(chapter: chapter,
-                                      showTamilText: viewModel.showTamilText,
-                                      favoriteManager: favoriteManager)
-                        }
-                    }
-                    .padding(.horizontal)
-                    
-                    if favoriteChapters.count > 6 {
-                        Button(action: {
-                            viewModel.expandedFavoriteChapters.toggle()
-                        }) {
-                            Text(viewModel.expandedFavoriteChapters ? "Show Less" : "Show More")
-                                .foregroundColor(AppColors.primaryRed)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
+                .onAppear {
+                    scrollProxy = proxy
                 }
-                
-                if favoriteKurals.isEmpty && favoriteChapters.isEmpty {
-                    Text("No favorites yet")
-                        .font(.system(size: fontSize(17)))
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
+                // Enable tap at top to scroll to top
+                .overlay(
+                    GeometryReader { geometry in
+                        Color.clear
+                            .frame(height: 50)
+                            .onTapGesture {
+                                let window = UIApplication.shared.windows.first
+                                let topPadding = window?.safeAreaInsets.top ?? 0
+                                let tapLocation = geometry.frame(in: .global).minY
+                                
+                                if tapLocation < topPadding + 50 {
+                                    withAnimation {
+                                        scrollProxy?.scrollTo("top", anchor: .top)
+                                    }
+                                }
+                            }
+                    }
+                    .frame(height: 50)
+                    , alignment: .top
+                )
+            }
+        }
+        .onChange(of: selectedTab) { newTab in
+            if newTab == 3 { // Favorites tab index
+                withAnimation {
+                    scrollProxy?.scrollTo("top", anchor: .top)
                 }
             }
-            .padding(.vertical)
-            .background(AppColors.primaryBG)
         }
     }
 }
