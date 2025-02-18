@@ -11,7 +11,6 @@ struct FavoritesView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @State private var scrollProxy: ScrollViewProxy?
     @State private var refreshing = false
     @State private var selectedTab = 0
     
@@ -112,47 +111,6 @@ struct FavoritesView: View {
                     .padding(.vertical)
                 }
                 .background(AppColors.primaryBG)
-                .refreshable {
-                    // Simulate refresh
-                    refreshing = true
-                    try? await Task.sleep(nanoseconds: 1_000_000_000)
-                    refreshing = false
-                    
-                    // Scroll to top after refresh
-                    withAnimation {
-                        proxy.scrollTo("top", anchor: .top)
-                    }
-                }
-                .onAppear {
-                    scrollProxy = proxy
-                }
-                // Enable tap at top to scroll to top
-                .overlay(
-                    GeometryReader { geometry in
-                        Color.clear
-                            .frame(height: 50)
-                            .onTapGesture {
-                                let window = UIApplication.shared.windows.first
-                                let topPadding = window?.safeAreaInsets.top ?? 0
-                                let tapLocation = geometry.frame(in: .global).minY
-                                
-                                if tapLocation < topPadding + 50 {
-                                    withAnimation {
-                                        scrollProxy?.scrollTo("top", anchor: .top)
-                                    }
-                                }
-                            }
-                    }
-                    .frame(height: 50)
-                    , alignment: .top
-                )
-            }
-        }
-        .onChange(of: selectedTab) { newTab in
-            if newTab == 3 { // Favorites tab index
-                withAnimation {
-                    scrollProxy?.scrollTo("top", anchor: .top)
-                }
             }
         }
     }
