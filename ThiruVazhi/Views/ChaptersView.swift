@@ -15,7 +15,7 @@ struct ChaptersView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @FocusState private var isSearchFocused: Bool
     @Binding var scrollProxy: ScrollViewProxy?
-
+    @State private var isSearching = false
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
             return size * 1.3
@@ -45,9 +45,20 @@ struct ChaptersView: View {
             return filteredByBook
         }
         
+        // Handle number search first
+        let cleanedSearch = searchText.lowercased().replacingOccurrences(of: "chapter", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let searchNumber = Int(cleanedSearch) {
+            return filteredByBook.filter { chapter in
+                chapter.number == searchNumber
+            }
+        }
+        
+        // If not a number search, filter by text
         return filteredByBook.filter { chapter in
             chapter.translation.localizedCaseInsensitiveContains(searchText) ||
-            chapter.transliteration.localizedCaseInsensitiveContains(searchText)
+            chapter.name.localizedCaseInsensitiveContains(searchText) ||
+            "chapter \(chapter.number)".localizedCaseInsensitiveContains(searchText)
         }
     }
     
@@ -75,7 +86,12 @@ struct ChaptersView: View {
                     }
                 }
                 
-                SearchBar(text: $searchText, onSearch: { _ in }, isFocused: $isSearchFocused)
+                SearchBar(text: $searchText, onSearch: { query in
+                    withAnimation {
+                        isSearchFocused = true
+                        searchText = query
+                    }
+                }, isFocused: $isSearchFocused)
                     .padding(.horizontal)
                 
                 ScrollView {
@@ -114,5 +130,11 @@ struct ChaptersView: View {
     
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
+extension String {
+    func trim() -> String {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

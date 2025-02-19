@@ -67,6 +67,16 @@ struct ExploreView: View {
                 }
             }
         } else if !searchText.isEmpty {
+            // Handle number search first
+            let cleanedSearch = searchText.lowercased().replacingOccurrences(of: "kural", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if let searchNumber = Int(cleanedSearch) {
+                return viewModel.kurals.filter { kural in
+                    kural.Number == searchNumber
+                }
+            }
+            
+            // If not a number, use the existing search functionality
             return viewModel.filteredKurals
         }
         return []
