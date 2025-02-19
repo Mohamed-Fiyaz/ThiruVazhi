@@ -24,7 +24,6 @@ struct ExploreView: View {
         return size
     }
     
-    
     struct Theme: Identifiable {
         let id = UUID()
         let title: String
@@ -60,6 +59,22 @@ struct ExploreView: View {
     }
     
     var filteredKurals: [Kural] {
+        let cleanedSearch = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if cleanedSearch == "kural" {
+            return []
+        }
+        
+        if cleanedSearch.hasPrefix("kural") {
+            let numberPart = cleanedSearch.replacingOccurrences(of: "kural", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if let searchNumber = Int(numberPart) {
+                return viewModel.kurals.filter { kural in
+                    kural.Number == searchNumber
+                }
+            }
+        }
+        
         if let theme = selectedTheme {
             return viewModel.kurals.filter { kural in
                 theme.kuralRanges.contains { range in
@@ -67,16 +82,6 @@ struct ExploreView: View {
                 }
             }
         } else if !searchText.isEmpty {
-            // Handle number search first
-            let cleanedSearch = searchText.lowercased().replacingOccurrences(of: "kural", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            if let searchNumber = Int(cleanedSearch) {
-                return viewModel.kurals.filter { kural in
-                    kural.Number == searchNumber
-                }
-            }
-            
-            // If not a number, use the existing search functionality
             return viewModel.filteredKurals
         }
         return []
@@ -134,7 +139,12 @@ struct ExploreView: View {
                                 .padding(.horizontal)
                             }
                         } else if !searchText.isEmpty {
-                            if viewModel.isSearching {
+                            if searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == "kural" {
+                                Text("Please specify a number after 'kural', e.g., 'kural 1'")
+                                    .font(.system(size: fontSize(17)))
+                                    .foregroundColor(.secondary)
+                                    .padding()
+                            } else if viewModel.isSearching {
                                 HStack {
                                     Spacer()
                                     ProgressView("Searching...")
@@ -163,10 +173,7 @@ struct ExploreView: View {
                                     .foregroundColor(.secondary)
                                     .padding()
                             }
-                        }
-                        
-                        
-                        else {
+                        } else {
                             Text("Themes")
                                 .font(.system(size: fontSize(22)))
                                 .fontWeight(.semibold)
@@ -180,6 +187,7 @@ struct ExploreView: View {
                                 }
                             }
                             .padding(.horizontal)
+                            
                             Text("Famous Thirukkurals")
                                 .font(.system(size: fontSize(22)))
                                 .fontWeight(.semibold)
