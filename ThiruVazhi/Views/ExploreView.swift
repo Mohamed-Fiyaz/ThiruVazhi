@@ -15,6 +15,7 @@ struct ExploreView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var isSearching = false
     @FocusState private var isSearchFocused: Bool
+    @Binding var scrollProxy: ScrollViewProxy?
     
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -104,35 +105,14 @@ struct ExploreView: View {
             }
             
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    if let theme = selectedTheme {
-                        Text(theme.title)
-                            .font(.system(size: fontSize(22)))
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
+                ScrollViewReader { proxy in
+                    VStack(alignment: .leading, spacing: 20) {
+                        Color.clear.frame(height: 0).id("top")
                         
-                        ForEach(filteredKurals) { kural in
-                            KuralCard(kural: kural,
-                                      showTamilText: viewModel.showTamilText,
-                                      favoriteManager: favoriteManager,
-                                      viewModel: viewModel,
-                                      hideChapterInfo: false)
-                            .padding(.horizontal)
-                        }
-                    } else if !searchText.isEmpty {
-                        if viewModel.isSearching {
-                            HStack {
-                                Spacer()
-                                ProgressView("Searching...")
-                                    .progressViewStyle(CircularProgressViewStyle())
-                                    .tint(AppColors.primaryRed)
-                                    .foregroundColor(AppColors.primaryRed)
-                                    .padding()
-                                Spacer()
-                            }
-                        } else if !filteredKurals.isEmpty {
-                            Text("Search Results")
-                                .font(.system(size: fontSize(17)))
+                        if let theme = selectedTheme {
+                            Text(theme.title)
+                                .font(.system(size: fontSize(22)))
+                                .fontWeight(.bold)
                                 .padding(.horizontal)
                             
                             ForEach(filteredKurals) { kural in
@@ -143,46 +123,74 @@ struct ExploreView: View {
                                           hideChapterInfo: false)
                                 .padding(.horizontal)
                             }
-                        } else {
-                            Text("No results found")
-                                .font(.system(size: fontSize(17)))
-                                .foregroundColor(.secondary)
-                                .padding()
-                        }
-                    }
-                    
-                    
-                    else {
-                        Text("Themes")
-                            .font(.system(size: fontSize(22)))
-                            .fontWeight(.semibold)
-                            .padding(.horizontal)
-                        
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                            ForEach(Theme.themes) { theme in
-                                ThemeButton(title: theme.title, icon: theme.icon) {
-                                    selectedTheme = theme
+                        } else if !searchText.isEmpty {
+                            if viewModel.isSearching {
+                                HStack {
+                                    Spacer()
+                                    ProgressView("Searching...")
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .tint(AppColors.primaryRed)
+                                        .foregroundColor(AppColors.primaryRed)
+                                        .padding()
+                                    Spacer()
                                 }
+                            } else if !filteredKurals.isEmpty {
+                                Text("Search Results")
+                                    .font(.system(size: fontSize(17)))
+                                    .padding(.horizontal)
+                                
+                                ForEach(filteredKurals) { kural in
+                                    KuralCard(kural: kural,
+                                              showTamilText: viewModel.showTamilText,
+                                              favoriteManager: favoriteManager,
+                                              viewModel: viewModel,
+                                              hideChapterInfo: false)
+                                    .padding(.horizontal)
+                                }
+                            } else {
+                                Text("No results found")
+                                    .font(.system(size: fontSize(17)))
+                                    .foregroundColor(.secondary)
+                                    .padding()
                             }
                         }
-                        .padding(.horizontal)
-                        Text("Famous Thirukkurals")
-                            .font(.system(size: fontSize(22)))
-                            .fontWeight(.semibold)
-                            .padding(.horizontal)
-                            .padding(.top)
                         
-                        ForEach(viewModel.famousKurals) { kural in
-                            KuralCard(kural: kural,
-                                      showTamilText: viewModel.showTamilText,
-                                      favoriteManager: favoriteManager,
-                                      viewModel: viewModel,
-                                      hideChapterInfo: false)
+                        
+                        else {
+                            Text("Themes")
+                                .font(.system(size: fontSize(22)))
+                                .fontWeight(.semibold)
+                                .padding(.horizontal)
+                            
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                ForEach(Theme.themes) { theme in
+                                    ThemeButton(title: theme.title, icon: theme.icon) {
+                                        selectedTheme = theme
+                                    }
+                                }
+                            }
                             .padding(.horizontal)
+                            Text("Famous Thirukkurals")
+                                .font(.system(size: fontSize(22)))
+                                .fontWeight(.semibold)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            
+                            ForEach(viewModel.famousKurals) { kural in
+                                KuralCard(kural: kural,
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: false)
+                                .padding(.horizontal)
+                            }
                         }
                     }
+                    .padding(.vertical)
+                    .onAppear {
+                        scrollProxy = proxy
+                    }
                 }
-                .padding(.vertical)
             }
         }
         .background(AppColors.primaryBG)

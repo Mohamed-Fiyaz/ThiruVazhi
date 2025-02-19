@@ -11,15 +11,15 @@ struct HomeView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Binding var scrollProxy: ScrollViewProxy?
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3  
+            return size * 1.3
         }
         return size
     }
 
-    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -32,50 +32,56 @@ struct HomeView: View {
                 }
                 .padding()
                 ScrollView {
-                    VStack(spacing: 20) {
-                        if let kuralOfDay = viewModel.kuralOfTheDay {
-                            Text("Thirukkural of the day")
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                    ScrollViewReader { proxy in
+                        VStack(spacing: 20) {
+                            Color.clear.frame(height: 0).id("top")
                             
-                            KuralCard(kural: kuralOfDay,
-                                    showTamilText: viewModel.showTamilText,
-                                    favoriteManager: favoriteManager,
-                                    viewModel: viewModel,
-                                    hideChapterInfo: false)
-                            .padding(.bottom, 20)
+                            if let kuralOfDay = viewModel.kuralOfTheDay {
+                                Text("Thirukkural of the day")
+                                    .font(.system(size: fontSize(22)))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.black)
+                                
+                                KuralCard(kural: kuralOfDay,
+                                        showTamilText: viewModel.showTamilText,
+                                        favoriteManager: favoriteManager,
+                                        viewModel: viewModel,
+                                        hideChapterInfo: false)
+                                .padding(.bottom, 20)
 
-                        }
-                        
-                        if let randomKural = viewModel.randomKural {
-                            Text("Random Thirukkural")
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.semibold)
-                                .foregroundColor(.black)
-                            KuralCard(kural: randomKural,
-                                    showTamilText: viewModel.showTamilText,
-                                    favoriteManager: favoriteManager,
-                                    viewModel: viewModel,
-                                    hideChapterInfo: false)
-
-                            Button(action: {
-                                viewModel.generateRandomKural()
-                            }) {
-                                Text("Generate New Thirukkural")
-                                    .font(.system(size: fontSize(16)))
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(AppColors.primaryRed)
-                                    .cornerRadius(10)
                             }
-                            .padding(.bottom, 20)
-                        }
-                        
-                        HistoryCard()
+                            
+                            if let randomKural = viewModel.randomKural {
+                                Text("Random Thirukkural")
+                                    .font(.system(size: fontSize(22)))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.black)
+                                KuralCard(kural: randomKural,
+                                        showTamilText: viewModel.showTamilText,
+                                        favoriteManager: favoriteManager,
+                                        viewModel: viewModel,
+                                        hideChapterInfo: false)
 
+                                Button(action: {
+                                    viewModel.generateRandomKural()
+                                }) {
+                                    Text("Generate New Thirukkural")
+                                        .font(.system(size: fontSize(16)))
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(AppColors.primaryRed)
+                                        .cornerRadius(10)
+                                }
+                                .padding(.bottom, 20)
+                            }
+                            
+                            HistoryCard()
+                        }
+                        .padding()
+                        .onAppear {
+                            scrollProxy = proxy
+                        }
                     }
-                    .padding()
                 }
             }
             .background(AppColors.primaryBG)

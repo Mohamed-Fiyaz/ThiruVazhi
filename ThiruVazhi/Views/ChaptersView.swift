@@ -10,11 +10,11 @@ import SwiftUI
 struct ChaptersView: View {
     @ObservedObject var viewModel: ThirukkuralViewModel
     @ObservedObject var favoriteManager: FavoriteManager
-    @State private var selectedBook = "All" 
+    @State private var selectedBook = "All"
     @State private var searchText = ""
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @FocusState private var isSearchFocused: Bool
-    @State private var chaptersScrollProxy: ScrollViewProxy?
+    @Binding var scrollProxy: ScrollViewProxy?
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -80,19 +80,26 @@ struct ChaptersView: View {
                 
                 ScrollView {
                     ScrollViewReader { proxy in
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                            ForEach(filteredChapters) { chapter in
-                                NavigationLink(destination: ChapterDetailView(chapter: chapter, viewModel: viewModel, favoriteManager: favoriteManager)) {
-                                    ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
-                                }
-                                .id(chapter.number)
-                            }.padding(.top, 2)
-                        }
-                        .padding()
-                        .onChange(of: selectedBook) { _ in
-                            if let firstChapter = filteredChapters.first {
-                                proxy.scrollTo(firstChapter.number, anchor: .top)
+                        VStack {
+                            Color.clear.frame(height: 0).id("top")
+                            
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                ForEach(filteredChapters) { chapter in
+                                    NavigationLink(destination: ChapterDetailView(chapter: chapter, viewModel: viewModel, favoriteManager: favoriteManager)) {
+                                        ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
+                                    }
+                                    .id(chapter.number)
+                                }.padding(.top, 2)
                             }
+                            .padding()
+                            .onChange(of: selectedBook) { _ in
+                                if let firstChapter = filteredChapters.first {
+                                    proxy.scrollTo(firstChapter.number, anchor: .top)
+                                }
+                            }
+                        }
+                        .onAppear {
+                            scrollProxy = proxy
                         }
                     }
                 }

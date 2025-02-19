@@ -9,20 +9,37 @@ import SwiftUI
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
+    var onRepeatTap: (Int) -> Void
     
     var body: some View {
         HStack {
             TabBarButton(imageName: "house", title: "Home", isSelected: selectedTab == 0) {
-                selectedTab = 0
+                if selectedTab == 0 {
+                    onRepeatTap(0)
+                } else {
+                    selectedTab = 0
+                }
             }
             TabBarButton(imageName: "book", title: "Chapters", isSelected: selectedTab == 1) {
-                selectedTab = 1
+                if selectedTab == 1 {
+                    onRepeatTap(1)
+                } else {
+                    selectedTab = 1
+                }
             }
             TabBarButton(imageName: "magnifyingglass", title: "Explore", isSelected: selectedTab == 2) {
-                selectedTab = 2
+                if selectedTab == 2 {
+                    onRepeatTap(2)
+                } else {
+                    selectedTab = 2
+                }
             }
             TabBarButton(imageName: "star", title: "Favorites", isSelected: selectedTab == 3) {
-                selectedTab = 3
+                if selectedTab == 3 {
+                    onRepeatTap(3)
+                } else {
+                    selectedTab = 3
+                }
             }
         }
         .padding(.vertical, 8)

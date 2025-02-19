@@ -13,6 +13,7 @@ struct FavoritesView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var refreshing = false
     @State private var selectedTab = 0
+    @Binding var scrollProxy: ScrollViewProxy?
     
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -36,10 +37,9 @@ struct FavoritesView: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewReader { proxy in
-                ScrollView {
+            ScrollView {
+                ScrollViewReader { proxy in
                     VStack(alignment: .leading, spacing: 20) {
-                        // Top anchor view for scroll-to-top
                         Color.clear
                             .frame(height: 0)
                             .id("top")
@@ -109,9 +109,12 @@ struct FavoritesView: View {
                         }
                     }
                     .padding(.vertical)
+                    .onAppear {
+                        scrollProxy = proxy
+                    }
                 }
-                .background(AppColors.primaryBG)
             }
+            .background(AppColors.primaryBG)
         }
     }
 }
