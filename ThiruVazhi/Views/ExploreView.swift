@@ -17,6 +17,11 @@ struct ExploreView: View {
     @FocusState private var isSearchFocused: Bool
     @Binding var scrollProxy: ScrollViewProxy?
     
+    // Track separate scroll positions
+    @State private var mainPageScrollPosition: CGFloat = 0
+    @State private var themeScrollPosition: CGFloat = 0
+    @State private var scrollID = UUID()
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
             return size * 1.3
@@ -24,11 +29,15 @@ struct ExploreView: View {
         return size
     }
     
-    struct Theme: Identifiable {
+    struct Theme: Identifiable, Equatable {
         let id = UUID()
         let title: String
         let icon: String
         let kuralRanges: [(Int, Int)]
+        
+        static func == (lhs: Theme, rhs: Theme) -> Bool {
+            return lhs.title == rhs.title
+        }
         
         static let themes: [Theme] = [
             Theme(title: "Love & Friendship", icon: "heart", kuralRanges: [
@@ -92,6 +101,8 @@ struct ExploreView: View {
             if selectedTheme != nil {
                 HStack {
                     Button(action: {
+                        // Force view refresh when toggling between views
+                        scrollID = UUID()
                         selectedTheme = nil
                     }) {
                         HStack(spacing: 4) {
@@ -119,96 +130,34 @@ struct ExploreView: View {
                 .padding()
             }
             
-            ScrollView {
-                ScrollViewReader { proxy in
-                    VStack(alignment: .leading, spacing: 20) {
-                        Color.clear.frame(height: 0).id("top")
-                        
-                        if let theme = selectedTheme {
-                            Text(theme.title)
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.bold)
-                                .padding(.horizontal)
-                            
-                            ForEach(filteredKurals) { kural in
-                                KuralCard(kural: kural,
-                                          showTamilText: viewModel.showTamilText,
-                                          favoriteManager: favoriteManager,
-                                          viewModel: viewModel,
-                                          hideChapterInfo: false)
-                                .padding(.horizontal)
-                            }
-                        } else if !searchText.isEmpty {
-                            if searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == "kural" {
-                                Text("Please specify a number after 'kural', e.g., 'kural 1'")
-                                    .font(.system(size: fontSize(17)))
-                                    .foregroundColor(.secondary)
-                                    .padding()
-                            } else if viewModel.isSearching {
-                                HStack {
-                                    Spacer()
-                                    ProgressView("Searching...")
-                                        .progressViewStyle(CircularProgressViewStyle())
-                                        .tint(AppColors.primaryRed)
-                                        .foregroundColor(AppColors.primaryRed)
-                                        .padding()
-                                    Spacer()
-                                }
-                            } else if !filteredKurals.isEmpty {
-                                Text("Search Results")
-                                    .font(.system(size: fontSize(17)))
-                                    .padding(.horizontal)
-                                
-                                ForEach(filteredKurals) { kural in
-                                    KuralCard(kural: kural,
-                                              showTamilText: viewModel.showTamilText,
-                                              favoriteManager: favoriteManager,
-                                              viewModel: viewModel,
-                                              hideChapterInfo: false)
-                                    .padding(.horizontal)
-                                }
-                            } else {
-                                Text("No results found")
-                                    .font(.system(size: fontSize(17)))
-                                    .foregroundColor(.secondary)
-                                    .padding()
-                            }
-                        } else {
-                            Text("Themes")
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.semibold)
-                                .padding(.horizontal)
-                            
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                                ForEach(Theme.themes) { theme in
-                                    ThemeButton(title: theme.title, icon: theme.icon) {
-                                        selectedTheme = theme
-                                    }
-                                }
-                            }
-                            .padding(.horizontal)
-                            
-                            Text("Famous Thirukkurals")
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.semibold)
-                                .padding(.horizontal)
-                                .padding(.top)
-                            
-                            ForEach(viewModel.famousKurals) { kural in
-                                KuralCard(kural: kural,
-                                          showTamilText: viewModel.showTamilText,
-                                          favoriteManager: favoriteManager,
-                                          viewModel: viewModel,
-                                          hideChapterInfo: false)
-                                .padding(.horizontal)
-                            }
-                        }
+            // Use different ScrollView based on context
+            if selectedTheme != nil {
+                // Theme ScrollView
+                ThemeContentView(
+                    theme: selectedTheme!,
+                    viewModel: viewModel,
+                    favoriteManager: favoriteManager,
+                    filteredKurals: filteredKurals,
+                    fontSize: fontSize,
+                    scrollProxy: $scrollProxy
+                )
+                .id("theme-\(selectedTheme!.title)-\(scrollID.uuidString)")
+            } else {
+                // Main ScrollView
+                MainContentView(
+                    searchText: searchText,
+                    viewModel: viewModel,
+                    favoriteManager: favoriteManager,
+                    filteredKurals: filteredKurals,
+                    fontSize: fontSize,
+                    scrollProxy: $scrollProxy,
+                    onThemeSelected: { theme in
+                        // Force view refresh when toggling between views
+                        scrollID = UUID()
+                        selectedTheme = theme
                     }
-                    .padding(.vertical)
-                    .onAppear {
-                        scrollProxy = proxy
-                    }
-                }
+                )
+                .id("main-content-\(scrollID.uuidString)")
             }
         }
         .background(AppColors.primaryBG)
@@ -219,5 +168,140 @@ struct ExploreView: View {
     
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
+// Extracted Theme Content View
+struct ThemeContentView: View {
+    let theme: ExploreView.Theme
+    @ObservedObject var viewModel: ThirukkuralViewModel
+    @ObservedObject var favoriteManager: FavoriteManager
+    let filteredKurals: [Kural]
+    let fontSize: (CGFloat) -> CGFloat
+    @Binding var scrollProxy: ScrollViewProxy?
+    
+    var body: some View {
+        ScrollView {
+            ScrollViewReader { proxy in
+                VStack(alignment: .leading, spacing: 20) {
+                    Color.clear.frame(height: 0).id("theme-top")
+                    
+                    Text(theme.title)
+                        .font(.system(size: fontSize(22)))
+                        .fontWeight(.bold)
+                        .padding(.horizontal)
+                    
+                    ForEach(filteredKurals) { kural in
+                        KuralCard(kural: kural,
+                                  showTamilText: viewModel.showTamilText,
+                                  favoriteManager: favoriteManager,
+                                  viewModel: viewModel,
+                                  hideChapterInfo: false)
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.vertical)
+                .onAppear {
+                    scrollProxy = proxy
+                    // Always scroll to top when theme view appears
+                    DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            proxy.scrollTo("theme-top", anchor: .top)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Extracted Main Content View
+struct MainContentView: View {
+    let searchText: String
+    @ObservedObject var viewModel: ThirukkuralViewModel
+    @ObservedObject var favoriteManager: FavoriteManager
+    let filteredKurals: [Kural]
+    let fontSize: (CGFloat) -> CGFloat
+    @Binding var scrollProxy: ScrollViewProxy?
+    let onThemeSelected: (ExploreView.Theme) -> Void
+    
+    var body: some View {
+        ScrollView {
+            ScrollViewReader { proxy in
+                VStack(alignment: .leading, spacing: 20) {
+                    Color.clear.frame(height: 0).id("main-top")
+                    
+                    if !searchText.isEmpty {
+                        if searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == "kural" {
+                            Text("Please specify a number after 'kural', e.g., 'kural 1'")
+                                .font(.system(size: fontSize(17)))
+                                .foregroundColor(.secondary)
+                                .padding()
+                        } else if viewModel.isSearching {
+                            HStack {
+                                Spacer()
+                                ProgressView("Searching...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .tint(AppColors.primaryRed)
+                                    .foregroundColor(AppColors.primaryRed)
+                                    .padding()
+                                Spacer()
+                            }
+                        } else if !filteredKurals.isEmpty {
+                            Text("Search Results")
+                                .font(.system(size: fontSize(17)))
+                                .padding(.horizontal)
+                            
+                            ForEach(filteredKurals) { kural in
+                                KuralCard(kural: kural,
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: false)
+                                .padding(.horizontal)
+                            }
+                        } else {
+                            Text("No results found")
+                                .font(.system(size: fontSize(17)))
+                                .foregroundColor(.secondary)
+                                .padding()
+                        }
+                    } else {
+                        Text("Themes")
+                            .font(.system(size: fontSize(22)))
+                            .fontWeight(.semibold)
+                            .padding(.horizontal)
+                        
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                            ForEach(ExploreView.Theme.themes) { theme in
+                                ThemeButton(title: theme.title, icon: theme.icon) {
+                                    onThemeSelected(theme)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        Text("Famous Thirukkurals")
+                            .font(.system(size: fontSize(22)))
+                            .fontWeight(.semibold)
+                            .padding(.horizontal)
+                            .padding(.top)
+                        
+                        ForEach(viewModel.famousKurals) { kural in
+                            KuralCard(kural: kural,
+                                      showTamilText: viewModel.showTamilText,
+                                      favoriteManager: favoriteManager,
+                                      viewModel: viewModel,
+                                      hideChapterInfo: false)
+                            .padding(.horizontal)
+                        }
+                    }
+                }
+                .padding(.vertical)
+                .onAppear {
+                    scrollProxy = proxy
+                    // Always scroll to top when main view appears
+                            proxy.scrollTo("main-top", anchor: .top)
+                }
+            }
+        }
     }
 }
