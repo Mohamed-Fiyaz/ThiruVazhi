@@ -125,15 +125,24 @@ struct ChaptersView: View {
                             }
                         }
                     }
-                    
+
                     SearchBar(text: $searchText, onSearch: { query in
-                        withAnimation {
-                            isSearchFocused = true
-                            searchText = query
-                        }
+
+                        searchText = query
                     }, isFocused: $isSearchFocused)
                         .padding(.horizontal)
-                    
+                    if !searchText.isEmpty && filteredChapters.isEmpty {
+                        VStack {
+                            Spacer()
+                            Text("No results found")
+                                .font(.system(size: fontSize(17)))
+                                .foregroundColor(.secondary)
+                                .padding()
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 40)
+                    } else {
                     ScrollView {
                         ScrollViewReader { proxy in
                             VStack {
@@ -146,8 +155,8 @@ struct ChaptersView: View {
                                             selectedChapter = chapter
                                         }) {
                                             ChapterCard(chapter: chapter,
-                                                      showTamilText: viewModel.showTamilText,
-                                                      favoriteManager: favoriteManager)
+                                                        showTamilText: viewModel.showTamilText,
+                                                        favoriteManager: favoriteManager)
                                         }
                                         .id(chapter.number)
                                     }.padding(.top, 2)
@@ -162,6 +171,7 @@ struct ChaptersView: View {
                             .onAppear {
                                 scrollProxy = proxy
                             }
+                        }
                         }
                     }
                 }

@@ -221,11 +221,17 @@ struct MainContentView: View {
                     
                     if !searchText.isEmpty {
                         if searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == "kural" {
-                            Text("Please specify a number after 'kural', e.g., 'kural 1'")
-                                .font(.system(size: fontSize(17)))
-                                .foregroundColor(.secondary)
-                                .padding()
-                        } else if viewModel.isSearching {
+                            VStack {
+                                Text("Please specify a number after 'kural', e.g., 'kural 1'")
+                                    .font(.system(size: fontSize(17)))
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding()
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        else if viewModel.isSearching {
                             HStack {
                                 Spacer()
                                 ProgressView("Searching...")
@@ -249,10 +255,15 @@ struct MainContentView: View {
                                 .padding(.horizontal)
                             }
                         } else {
-                            Text("No results found")
-                                .font(.system(size: fontSize(17)))
-                                .foregroundColor(.secondary)
-                                .padding()
+                            VStack {
+                                Text("No results found")
+                                    .font(.system(size: fontSize(17)))
+                                    .foregroundColor(.secondary)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.top, 40)
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                     } else {
                         Text("Themes")
