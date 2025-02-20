@@ -22,24 +22,6 @@ struct HistoryDetailView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: fontSize(17)))
-                        Text("Back")
-                            .font(.system(size: fontSize(17)))
-                    }
-                    .foregroundColor(AppColors.primaryRed)
-                }
-                .padding(.leading)
-                
-                Spacer()
-            }
-            .padding(.vertical, 12)
-            
             ScrollView {
                 ScrollViewReader { proxy in
                     VStack(alignment: .leading, spacing: 20) {

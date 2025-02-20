@@ -12,6 +12,8 @@ struct HomeView: View {
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Binding var scrollProxy: ScrollViewProxy?
+    @State private var selectedHistory: Bool = false
+    @State private var scrollID = UUID()
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -21,8 +23,30 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            if selectedHistory {
+                HStack {
+                    Button(action: {
+                        scrollID = UUID()
+                        selectedHistory = false
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: fontSize(17)))
+                            Text("Back")
+                                .font(.system(size: fontSize(17)))
+                        }
+                        .foregroundColor(AppColors.primaryRed)
+                    }
+                    .padding(.leading)
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 12)
+                
+                HistoryDetailView(scrollProxy: $scrollProxy)
+                    .id("history-\(scrollID.uuidString)")
+            } else {
                 HStack {
                     Spacer()
                     Text("Show Tamil Text")
@@ -33,6 +57,7 @@ struct HomeView: View {
                         .font(.system(size: fontSize(17)))
                 }
                 .padding()
+                
                 ScrollView {
                     ScrollViewReader { proxy in
                         VStack(spacing: 20) {
@@ -50,7 +75,6 @@ struct HomeView: View {
                                         viewModel: viewModel,
                                         hideChapterInfo: false)
                                 .padding(.bottom, 20)
-
                             }
                             
                             if let randomKural = viewModel.randomKural {
@@ -58,6 +82,7 @@ struct HomeView: View {
                                     .font(.system(size: fontSize(22)))
                                     .fontWeight(.semibold)
                                     .foregroundColor(.black)
+                                
                                 KuralCard(kural: randomKural,
                                         showTamilText: viewModel.showTamilText,
                                         favoriteManager: favoriteManager,
@@ -77,8 +102,12 @@ struct HomeView: View {
                                 .padding(.bottom, 20)
                             }
                             
-                            HistoryCard(historyScrollProxy: $scrollProxy)
-
+                            Button(action: {
+                                scrollID = UUID()
+                                selectedHistory = true
+                            }) {
+                                HistoryCard(historyScrollProxy: $scrollProxy)
+                            }
                         }
                         .padding()
                         .onAppear {
@@ -87,8 +116,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .background(AppColors.primaryBG)
-            .navigationBarHidden(true)
         }
+        .background(AppColors.primaryBG)
     }
 }

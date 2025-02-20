@@ -30,32 +30,6 @@ struct ChapterDetailView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button(action: {
-                    scrollID = UUID()
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: fontSize(17)))
-                        Text("Back")
-                            .font(.system(size: fontSize(17)))
-                    }
-                    .foregroundColor(AppColors.primaryRed)
-                }
-                .padding(.leading)
-                
-                Spacer()
-                
-                Text("Show Tamil Text")
-                    .font(.system(size: fontSize(17)))
-                Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
-                    .labelsHidden()
-                    .tint(AppColors.primaryRed)
-                    .padding(.trailing)
-                    .font(.system(size: fontSize(17)))
-            }
-            .padding(.vertical, 12)
-            
             ScrollView {
                 ScrollViewReader { proxy in
                     VStack(spacing: 16) {
