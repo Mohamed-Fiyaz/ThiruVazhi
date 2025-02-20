@@ -140,7 +140,6 @@ struct ExploreView: View {
                 )
                 .id("theme-\(selectedTheme!.title)-\(scrollID.uuidString)")
             } else {
-                // Main ScrollView
                 MainContentView(
                     searchText: searchText,
                     viewModel: viewModel,

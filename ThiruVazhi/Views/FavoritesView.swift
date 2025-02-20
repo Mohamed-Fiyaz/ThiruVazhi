@@ -158,5 +158,8 @@ struct FavoritesView: View {
             }
         }
         .background(AppColors.primaryBG)
+        .onDisappear {
+            viewModel.resetFavoritesExpansion()
+        }
     }
 }

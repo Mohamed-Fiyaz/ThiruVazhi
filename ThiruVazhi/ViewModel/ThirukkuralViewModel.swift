@@ -13,19 +13,19 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var details: DetailData?
     @Published var kuralOfTheDay: Kural?
     @Published var randomKural: Kural?
-    @Published var expandedFavoriteKurals = false
-    @Published var expandedFavoriteChapters = false
     @Published var filteredKurals: [Kural] = []
     @Published var famousKurals: [Kural] = []
     @Published var isSearching = false
     
-    // Update the showTamilText property to use UserDefaults
     @Published var showTamilText: Bool {
         didSet {
-            // Save the value whenever it changes
             UserDefaults.standard.set(showTamilText, forKey: "showTamilText")
         }
     }
+    
+    // Change these to regular properties since we want to reset them
+    @Published var expandedFavoriteKurals = false
+    @Published var expandedFavoriteChapters = false
 
     private var searchWorkItem: DispatchWorkItem?
     private var searchIndex: [(kural: Kural, searchText: String)] = []
@@ -46,8 +46,13 @@ class ThirukkuralViewModel: ObservableObject {
         return nil
     }
     
+    func resetFavoritesExpansion() {
+        expandedFavoriteKurals = false
+        expandedFavoriteChapters = false
+    }
+    
     init() {
-        // Initialize showTamilText with the saved value, defaulting to true if not set
+
         self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
         
         loadData()

@@ -27,7 +27,6 @@ struct ChaptersView: View {
     }
     
     var filteredChapters: [Chapter] {
-        // Existing filtered chapters logic remains the same
         guard let details = viewModel.details else { return [] }
         let allChapters = details.section.detail.flatMap { book in
             book.chapterGroup.detail.flatMap { group in
