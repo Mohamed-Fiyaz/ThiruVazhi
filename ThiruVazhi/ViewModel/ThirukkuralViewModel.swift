@@ -23,7 +23,6 @@ class ThirukkuralViewModel: ObservableObject {
         }
     }
     
-    // Change these to regular properties since we want to reset them
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
 
@@ -52,8 +51,14 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     init() {
-
-        self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
+        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+        
+        if !hasLaunchedBefore {
+            self.showTamilText = true
+            UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+        } else {
+            self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
+        }
         
         loadData()
         setKuralOfTheDay()
