@@ -14,6 +14,7 @@ struct ChapterDetailView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Binding var scrollProxy: ScrollViewProxy?
+    @State private var scrollID = UUID()
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -31,26 +32,27 @@ struct ChapterDetailView: View {
         VStack(spacing: 0) {
             HStack {
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    scrollID = UUID()
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
+                            .font(.system(size: fontSize(17)))
                         Text("Back")
+                            .font(.system(size: fontSize(17)))
                     }
                     .foregroundColor(AppColors.primaryRed)
                 }
                 .padding(.leading)
-                    .foregroundColor(.black)
-                    HStack {
-                        Spacer()
-                        Text("Show Tamil Text")
-                        Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
-                            .labelsHidden()
-                            .tint(AppColors.primaryRed)
-                    }
-                    .foregroundColor(.black)
-
+                
                 Spacer()
+                
+                Text("Show Tamil Text")
+                    .font(.system(size: fontSize(17)))
+                Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
+                    .labelsHidden()
+                    .tint(AppColors.primaryRed)
+                    .padding(.trailing)
+                    .font(.system(size: fontSize(17)))
             }
             .padding(.vertical, 12)
             

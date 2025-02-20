@@ -102,7 +102,9 @@ struct ExploreView: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
+                                .font(.system(size: fontSize(17)))
                             Text("Back")
+                                .font(.system(size: fontSize(17)))
                         }
                         .foregroundColor(AppColors.primaryRed)
                     }
@@ -111,10 +113,12 @@ struct ExploreView: View {
                     Spacer()
                     
                     Text("Show Tamil Text")
+                        .font(.system(size: fontSize(17)))
                     Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
                         .labelsHidden()
                         .tint(AppColors.primaryRed)
                         .padding(.trailing)
+                        .font(.system(size: fontSize(17)))
                 }
                 .padding(.vertical, 12)
             } else {

@@ -48,7 +48,7 @@ struct KuralCard: View {
                 }) {
                     Image(systemName: favoriteManager.favoriteKurals.contains(kural.Number) ? "star.fill" : "star")
                         .foregroundColor(favoriteManager.favoriteKurals.contains(kural.Number) ? .yellow : .gray)
-                        .font(.system(size: fontSize(16)))
+                        .font(.system(size: fontSize(20)))
                 }
             }
             
@@ -81,6 +81,7 @@ struct KuralCard: View {
                 .font(.system(size: fontSize(15)))
                 .lineLimit(3)
                 .minimumScaleFactor(0.8)
+                .lineSpacing(6)
         }
         .padding()
         .background(AppColors.cardBg)

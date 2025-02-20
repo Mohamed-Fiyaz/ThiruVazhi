@@ -27,10 +27,11 @@ struct HistoryCard: View {
                     .foregroundColor(.black)
                 
                 VStack(spacing: 12) {
-                    Text("Thirukkural, written by the revered poet Thiruvalluvar over 2,000 years ago, is a timeless Tamil classic. Comprising 1,330 couplets, it offers wisdom on virtue, wealth, and love. Its universal values have made it a cornerstone of ethics and morality.")
+                    Text("Thirukkural, authored by Thiruvalluvar over 2,000 years ago, is one of the greatest literary works in Tamil. Consisting of 1,330 couplets, it is divided into three sections—Virtue (Aram), Wealth (Porul), and Love (Inbam). Each couplet, written in just seven words, conveys profound wisdom, making it a masterpiece of brevity and depth in classical literature.")
                         .font(.system(size: fontSize(16)))
                         .foregroundColor(.black)
                         .padding(20)
+                        .lineSpacing(6)
                     NavigationLink(destination: HistoryDetailView(scrollProxy: $historyScrollProxy)) {
 
                     Text("Read More")
@@ -41,6 +42,7 @@ struct HistoryCard: View {
                 }
 
             }
+                .padding()
                 .background(AppColors.cardBg)
                 .cornerRadius(10)
                 .overlay(

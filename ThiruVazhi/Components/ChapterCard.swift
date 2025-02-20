@@ -47,7 +47,7 @@ struct ChapterCard: View {
                 }) {
                     Image(systemName: favoriteManager.favoriteChapters.contains(chapter.number) ? "star.fill" : "star")
                         .foregroundColor(favoriteManager.favoriteChapters.contains(chapter.number) ? .yellow : .gray)
-                        .font(.system(size: fontSize(16)))
+                        .font(.system(size: fontSize(20)))
                 }
             }
             

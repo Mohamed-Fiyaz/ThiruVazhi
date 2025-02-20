@@ -26,9 +26,11 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     Text("Show Tamil Text")
+                        .font(.system(size: fontSize(17)))
                     Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
                         .labelsHidden()
                         .tint(AppColors.primaryRed)
+                        .font(.system(size: fontSize(17)))
                 }
                 .padding()
                 ScrollView {
