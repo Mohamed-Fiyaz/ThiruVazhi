@@ -27,7 +27,7 @@ struct ChapterCard: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(chapter.translation)
-                        .font(.system(size: fontSize(18)))
+                        .font(.system(size: fontSize(16)))
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .lineLimit(2)
@@ -35,7 +35,7 @@ struct ChapterCard: View {
                     
                     if showTamilText {
                         Text(chapter.name)
-                            .font(.system(size: fontSize(18)))
+                            .font(.system(size: fontSize(14)))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
@@ -47,14 +47,14 @@ struct ChapterCard: View {
                 }) {
                     Image(systemName: favoriteManager.favoriteChapters.contains(chapter.number) ? "star.fill" : "star")
                         .foregroundColor(favoriteManager.favoriteChapters.contains(chapter.number) ? .yellow : .gray)
-                        .font(.system(size: fontSize(18)))
+                        .font(.system(size: fontSize(16)))
                 }
             }
             
             Spacer(minLength: 4)
             
             Text("Chapter \(chapter.number)")
-                .font(.system(size: fontSize(13)))
+                .font(.system(size: fontSize(12)))
                 .foregroundColor(.secondary)
         }
         .padding()

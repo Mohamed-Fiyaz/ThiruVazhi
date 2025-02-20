@@ -102,9 +102,7 @@ struct ExploreView: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: fontSize(16)))
                             Text("Back")
-                                .font(.system(size: fontSize(18)))
                         }
                         .foregroundColor(AppColors.primaryRed)
                     }
@@ -113,9 +111,7 @@ struct ExploreView: View {
                     Spacer()
                     
                     Text("Show Tamil Text")
-                        .font(.system(size: fontSize(18)))
                     Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
-                        .font(.system(size: fontSize(18)))
                         .labelsHidden()
                         .tint(AppColors.primaryRed)
                         .padding(.trailing)
@@ -140,6 +136,7 @@ struct ExploreView: View {
                 )
                 .id("theme-\(selectedTheme!.title)-\(scrollID.uuidString)")
             } else {
+                // Main ScrollView
                 MainContentView(
                     searchText: searchText,
                     viewModel: viewModel,

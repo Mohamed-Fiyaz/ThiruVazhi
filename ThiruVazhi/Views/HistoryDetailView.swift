@@ -28,9 +28,7 @@ struct HistoryDetailView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: fontSize(16)))
                         Text("Back")
-                            .font(.system(size: fontSize(18)))
                     }
                     .foregroundColor(AppColors.primaryRed)
                 }
