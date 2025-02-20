@@ -31,15 +31,15 @@ struct KuralCard: View {
                     if !hideChapterInfo {
                         if let (chapter, book) = viewModel.getChapterAndBookForKural(kural.Number) {
                             Text("Book: \(book)")
-                                .font(.system(size: fontSize(12)))
+                                .font(.system(size: fontSize(15)))
                                 .foregroundColor(.secondary)
                             Text("Chapter: \(chapter)")
-                                .font(.system(size: fontSize(12)))
+                                .font(.system(size: fontSize(15)))
                                 .foregroundColor(.secondary)
                         }
                     }
                     Text("Kural \(kural.Number)")
-                        .font(.system(size: fontSize(14)))
+                        .font(.system(size: fontSize(15)))
                         .foregroundColor(.secondary)
                 }
                 Spacer()
@@ -54,31 +54,32 @@ struct KuralCard: View {
             
             if showTamilText {
                 Text(kural.Line1)
-                    .font(.system(size: fontSize(16)))
-                    .fontWeight(.semibold)
+                    .font(.system(size: fontSize(20)))
+                    .fontWeight(.medium)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                 Text(kural.Line2)
-                    .font(.system(size: fontSize(16)))
+                    .font(.system(size: fontSize(20)))
                     .fontWeight(.semibold)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                 Text("Translation")
-                    .font(.system(size: fontSize(14)))
+                    .font(.system(size: fontSize(15)))
                     .foregroundColor(.secondary)
             }
 
             Text(kural.Translation)
-                .font(.system(size: fontSize(16)))
+                .font(.system(size: fontSize(18)))
                 .fontWeight(.medium)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
+                .lineSpacing(6)
             
             Text("Meaning")
-                .font(.system(size: fontSize(14)))
+                .font(.system(size: fontSize(15)))
                 .foregroundColor(.secondary)
             Text(kural.explanation)
-                .font(.system(size: fontSize(15)))
+                .font(.system(size: fontSize(18)))
                 .lineLimit(3)
                 .minimumScaleFactor(0.8)
         }

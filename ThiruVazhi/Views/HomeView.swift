@@ -26,7 +26,9 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     Text("Show Tamil Text")
+                        .font(.system(size: fontSize(18)))
                     Toggle("Show Tamil Text", isOn: $viewModel.showTamilText)
+                        .font(.system(size: fontSize(18)))
                         .labelsHidden()
                         .tint(AppColors.primaryRed)
                 }
