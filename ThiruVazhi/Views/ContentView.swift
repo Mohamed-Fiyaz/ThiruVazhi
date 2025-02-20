@@ -84,6 +84,7 @@ struct ContentView: View {
             }
             CustomTabBar(selectedTab: $selectedTab, onRepeatTap: handleRepeatTap)
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .preferredColorScheme(.light)
         .background(AppColors.primaryBG)
     }
