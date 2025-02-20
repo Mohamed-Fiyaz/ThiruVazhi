@@ -12,13 +12,20 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var kurals: [Kural] = []
     @Published var details: DetailData?
     @Published var kuralOfTheDay: Kural?
-    @Published var showTamilText = true
     @Published var randomKural: Kural?
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
     @Published var filteredKurals: [Kural] = []
     @Published var famousKurals: [Kural] = []
     @Published var isSearching = false
+    
+    // Update the showTamilText property to use UserDefaults
+    @Published var showTamilText: Bool {
+        didSet {
+            // Save the value whenever it changes
+            UserDefaults.standard.set(showTamilText, forKey: "showTamilText")
+        }
+    }
 
     private var searchWorkItem: DispatchWorkItem?
     private var searchIndex: [(kural: Kural, searchText: String)] = []
@@ -40,6 +47,9 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     init() {
+        // Initialize showTamilText with the saved value, defaulting to true if not set
+        self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
+        
         loadData()
         setKuralOfTheDay()
         generateRandomKural()
@@ -94,8 +104,6 @@ class ThirukkuralViewModel: ObservableObject {
         DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
     }
 
-
-    
     private func loadData() {
         if let kuralURL = Bundle.main.url(forResource: "thirukkural", withExtension: "json"),
            let detailURL = Bundle.main.url(forResource: "detail", withExtension: "json") {

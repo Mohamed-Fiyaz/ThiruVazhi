@@ -226,7 +226,6 @@ struct MainContentView: View {
                                     .font(.system(size: fontSize(17)))
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
-                                    .padding()
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity)
@@ -260,7 +259,6 @@ struct MainContentView: View {
                                     .font(.system(size: fontSize(17)))
                                     .foregroundColor(.secondary)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.top, 40)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity)
