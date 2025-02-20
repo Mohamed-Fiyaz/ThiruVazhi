@@ -75,7 +75,8 @@ struct HomeView: View {
                                 .padding(.bottom, 20)
                             }
                             
-                            HistoryCard()
+                            HistoryCard(historyScrollProxy: $scrollProxy)
+
                         }
                         .padding()
                         .onAppear {

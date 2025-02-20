@@ -45,7 +45,6 @@ struct ChaptersView: View {
             return filteredByBook
         }
         
-        // Handle number search first
         let cleanedSearch = searchText.lowercased().replacingOccurrences(of: "chapter", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
         
         if let searchNumber = Int(cleanedSearch) {
@@ -54,7 +53,6 @@ struct ChaptersView: View {
             }
         }
         
-        // If not a number search, filter by text
         return filteredByBook.filter { chapter in
             chapter.translation.localizedCaseInsensitiveContains(searchText) ||
             chapter.name.localizedCaseInsensitiveContains(searchText) ||
@@ -101,7 +99,12 @@ struct ChaptersView: View {
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 ForEach(filteredChapters) { chapter in
-                                    NavigationLink(destination: ChapterDetailView(chapter: chapter, viewModel: viewModel, favoriteManager: favoriteManager)) {
+                                    NavigationLink(destination: ChapterDetailView(
+                                        chapter: chapter,
+                                        viewModel: viewModel,
+                                        favoriteManager: favoriteManager,
+                                        scrollProxy: $scrollProxy
+                                    )) {
                                         ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
                                     }
                                     .id(chapter.number)

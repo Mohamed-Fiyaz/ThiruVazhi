@@ -16,10 +16,6 @@ struct ExploreView: View {
     @State private var isSearching = false
     @FocusState private var isSearchFocused: Bool
     @Binding var scrollProxy: ScrollViewProxy?
-    
-    // Track separate scroll positions
-    @State private var mainPageScrollPosition: CGFloat = 0
-    @State private var themeScrollPosition: CGFloat = 0
     @State private var scrollID = UUID()
     
     private func fontSize(_ size: CGFloat) -> CGFloat {
@@ -101,7 +97,6 @@ struct ExploreView: View {
             if selectedTheme != nil {
                 HStack {
                     Button(action: {
-                        // Force view refresh when toggling between views
                         scrollID = UUID()
                         selectedTheme = nil
                     }) {
@@ -130,9 +125,7 @@ struct ExploreView: View {
                 .padding()
             }
             
-            // Use different ScrollView based on context
             if selectedTheme != nil {
-                // Theme ScrollView
                 ThemeContentView(
                     theme: selectedTheme!,
                     viewModel: viewModel,
@@ -152,7 +145,6 @@ struct ExploreView: View {
                     fontSize: fontSize,
                     scrollProxy: $scrollProxy,
                     onThemeSelected: { theme in
-                        // Force view refresh when toggling between views
                         scrollID = UUID()
                         selectedTheme = theme
                     }
@@ -171,7 +163,6 @@ struct ExploreView: View {
     }
 }
 
-// Extracted Theme Content View
 struct ThemeContentView: View {
     let theme: ExploreView.Theme
     @ObservedObject var viewModel: ThirukkuralViewModel
@@ -184,7 +175,7 @@ struct ThemeContentView: View {
         ScrollView {
             ScrollViewReader { proxy in
                 VStack(alignment: .leading, spacing: 20) {
-                    Color.clear.frame(height: 0).id("theme-top")
+                    Color.clear.frame(height: 0).id("top")
                     
                     Text(theme.title)
                         .font(.system(size: fontSize(22)))
@@ -203,17 +194,12 @@ struct ThemeContentView: View {
                 .padding(.vertical)
                 .onAppear {
                     scrollProxy = proxy
-                    // Always scroll to top when theme view appears
-                    DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            proxy.scrollTo("theme-top", anchor: .top)
-                    }
                 }
             }
         }
     }
 }
 
-// Extracted Main Content View
 struct MainContentView: View {
     let searchText: String
     @ObservedObject var viewModel: ThirukkuralViewModel
@@ -227,7 +213,7 @@ struct MainContentView: View {
         ScrollView {
             ScrollViewReader { proxy in
                 VStack(alignment: .leading, spacing: 20) {
-                    Color.clear.frame(height: 0).id("main-top")
+                    Color.clear.frame(height: 0).id("top")
                     
                     if !searchText.isEmpty {
                         if searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == "kural" {
@@ -298,8 +284,6 @@ struct MainContentView: View {
                 .padding(.vertical)
                 .onAppear {
                     scrollProxy = proxy
-                    // Always scroll to top when main view appears
-                            proxy.scrollTo("main-top", anchor: .top)
                 }
             }
         }

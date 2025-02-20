@@ -79,10 +79,13 @@ struct FavoritesView: View {
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 ForEach(Array(favoriteChapters.prefix(viewModel.expandedFavoriteChapters ? favoriteChapters.count : 6))) { chapter in
-                                    NavigationLink(destination: ChapterDetailView(chapter: chapter, viewModel: viewModel, favoriteManager: favoriteManager)) {
-                                        ChapterCard(chapter: chapter,
-                                                  showTamilText: viewModel.showTamilText,
-                                                  favoriteManager: favoriteManager)
+                                    NavigationLink(destination: ChapterDetailView(
+                                        chapter: chapter,
+                                        viewModel: viewModel,
+                                        favoriteManager: favoriteManager,
+                                        scrollProxy: $scrollProxy
+                                    )) {
+                                        ChapterCard(chapter: chapter, showTamilText: viewModel.showTamilText, favoriteManager: favoriteManager)
                                     }
                                 }
                             }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HistoryCard: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Binding var historyScrollProxy: ScrollViewProxy?
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -31,7 +32,7 @@ struct HistoryCard: View {
                         .foregroundColor(.black)
                         .multilineTextAlignment(.center)
                         .padding(20)
-                    NavigationLink(destination: HistoryDetailView()) {
+                    NavigationLink(destination: HistoryDetailView(scrollProxy: $historyScrollProxy)) {
 
                     Text("Read More")
                         .font(.system(size: fontSize(16)))

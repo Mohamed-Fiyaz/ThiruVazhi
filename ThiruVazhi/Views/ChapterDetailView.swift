@@ -13,6 +13,7 @@ struct ChapterDetailView: View {
     @ObservedObject var favoriteManager: FavoriteManager
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Binding var scrollProxy: ScrollViewProxy?
 
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
@@ -54,36 +55,43 @@ struct ChapterDetailView: View {
             .padding(.vertical, 12)
             
             ScrollView {
-                VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if viewModel.showTamilText {
-                            Text(chapter.name)
-                                .font(.system(size: fontSize(22)))
-                                .fontWeight(.bold)
-                        }
-                        Text(chapter.translation)
-                            .font(.system(size: fontSize(15)))
-                            .foregroundColor(.secondary)
-                        Text("Chapter \(chapter.number)")
-                            .font(.system(size: fontSize(12)))
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                    
+                ScrollViewReader { proxy in
                     VStack(spacing: 16) {
-                        ForEach(chapterKurals) { kural in
-                            KuralCard(kural: kural,
-                                    showTamilText: viewModel.showTamilText,
-                                    favoriteManager: favoriteManager,
-                                    viewModel: viewModel,
-                                    hideChapterInfo: true)
-                                .padding(.horizontal)
+                        Color.clear.frame(height: 0).id("top")
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            if viewModel.showTamilText {
+                                Text(chapter.name)
+                                    .font(.system(size: fontSize(22)))
+                                    .fontWeight(.bold)
+                            }
+                            Text(chapter.translation)
+                                .font(.system(size: fontSize(15)))
+                                .foregroundColor(.secondary)
+                            Text("Chapter \(chapter.number)")
+                                .font(.system(size: fontSize(12)))
+                                .foregroundColor(.secondary)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                        
+                        VStack(spacing: 16) {
+                            ForEach(chapterKurals) { kural in
+                                KuralCard(kural: kural,
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: true)
+                                .padding(.horizontal)
+                            }
+                        }
+                        .padding(.bottom)
                     }
-                    .padding(.bottom)
+                    .onAppear {
+                        scrollProxy = proxy
+                    }
                 }
             }
         }
