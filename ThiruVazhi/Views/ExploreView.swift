@@ -66,8 +66,10 @@ struct ExploreView: View {
     var filteredKurals: [Kural] {
         let cleanedSearch = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
-        if cleanedSearch == "kural" {
-            return []
+        if let searchNumber = Int(cleanedSearch) {
+            return viewModel.kurals.filter { kural in
+                kural.Number == searchNumber
+            }
         }
         
         if cleanedSearch.hasPrefix("kural") {

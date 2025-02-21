@@ -78,7 +78,6 @@ struct KuralCard: View {
                 .foregroundColor(.secondary)
             Text(kural.explanation)
                 .font(.system(size: fontSize(15)))
-                .lineLimit(3)
                 .minimumScaleFactor(0.8)
                 .lineSpacing(6)
         }

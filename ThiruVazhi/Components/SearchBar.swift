@@ -11,16 +11,22 @@ struct SearchBar: View {
     @Binding var text: String
     let onSearch: (String) -> Void
     @FocusState.Binding var isFocused: Bool
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
+    private func fontSize(_ size: CGFloat) -> CGFloat {
+        if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+            return size * 1.3
+        }
+        return size
+    }
     
     var body: some View {
         HStack {
             HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                    .padding(.leading, 8)
-                
                 TextField("Search", text: $text)
                     .focused($isFocused)
+                    .font(.system(size: fontSize(18)))
+                    .padding(.horizontal)
                     .onChange(of: text) { oldValue, newValue in
                         onSearch(newValue)
                     }
@@ -51,6 +57,7 @@ struct SearchBar: View {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                                     to: nil, from: nil, for: nil)
                 }
+                .font(.system(size: fontSize(18)))
                 .foregroundColor(AppColors.primaryRed)
             }
         }
