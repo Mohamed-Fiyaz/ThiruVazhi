@@ -16,7 +16,11 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var filteredKurals: [Kural] = []
     @Published var famousKurals: [Kural] = []
     @Published var isSearching = false
-    @Published var showTamilText: Bool = false
+    @Published var showTamilText: Bool {
+        didSet {
+            UserDefaults.standard.set(showTamilText, forKey: "showTamilText")
+        }
+    }
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
     
@@ -45,7 +49,7 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     init() {
-        self.showTamilText = false
+        self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
         
         loadData()
         setKuralOfTheDay()
