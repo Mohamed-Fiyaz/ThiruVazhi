@@ -44,10 +44,10 @@ struct ChapterContentView: View {
                     VStack(spacing: 16) {
                         ForEach(chapterKurals) { kural in
                             KuralCard(kural: kural,
-                                    showTamilText: viewModel.showTamilText,
-                                    favoriteManager: favoriteManager,
-                                    viewModel: viewModel,
-                                    hideChapterInfo: true)
+                                      showTamilText: viewModel.showTamilText,
+                                      favoriteManager: favoriteManager,
+                                      viewModel: viewModel,
+                                      hideChapterInfo: true)
                             .padding(.horizontal)
                         }
                     }

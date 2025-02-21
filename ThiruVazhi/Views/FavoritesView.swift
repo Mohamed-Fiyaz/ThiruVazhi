@@ -92,11 +92,11 @@ struct FavoritesView: View {
                                 
                                 ForEach(Array(favoriteKurals.prefix(viewModel.expandedFavoriteKurals ? favoriteKurals.count : 3))) { kural in
                                     KuralCard(kural: kural,
-                                            showTamilText: viewModel.showTamilText,
-                                            favoriteManager: favoriteManager,
-                                            viewModel: viewModel,
-                                            hideChapterInfo: false)
-                                        .padding(.horizontal)
+                                              showTamilText: viewModel.showTamilText,
+                                              favoriteManager: favoriteManager,
+                                              viewModel: viewModel,
+                                              hideChapterInfo: false)
+                                    .padding(.horizontal)
                                 }
                                 
                                 if favoriteKurals.count > 3 {

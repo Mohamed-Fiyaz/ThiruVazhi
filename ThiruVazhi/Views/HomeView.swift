@@ -14,14 +14,14 @@ struct HomeView: View {
     @Binding var scrollProxy: ScrollViewProxy?
     @State private var selectedHistory: Bool = false
     @State private var scrollID = UUID()
-
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
             return size * 1.3
         }
         return size
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             if selectedHistory {
@@ -70,10 +70,10 @@ struct HomeView: View {
                                     .foregroundColor(.black)
                                 
                                 KuralCard(kural: kuralOfDay,
-                                        showTamilText: viewModel.showTamilText,
-                                        favoriteManager: favoriteManager,
-                                        viewModel: viewModel,
-                                        hideChapterInfo: false)
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: false)
                                 .padding(.bottom, 20)
                             }
                             
@@ -84,11 +84,11 @@ struct HomeView: View {
                                     .foregroundColor(.black)
                                 
                                 KuralCard(kural: randomKural,
-                                        showTamilText: viewModel.showTamilText,
-                                        favoriteManager: favoriteManager,
-                                        viewModel: viewModel,
-                                        hideChapterInfo: false)
-
+                                          showTamilText: viewModel.showTamilText,
+                                          favoriteManager: favoriteManager,
+                                          viewModel: viewModel,
+                                          hideChapterInfo: false)
+                                
                                 Button(action: {
                                     viewModel.generateRandomKural()
                                 }) {

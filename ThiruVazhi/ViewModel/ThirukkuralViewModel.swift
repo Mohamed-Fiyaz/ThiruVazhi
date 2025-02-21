@@ -25,11 +25,11 @@ class ThirukkuralViewModel: ObservableObject {
     
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
-
+    
     private var searchWorkItem: DispatchWorkItem?
     private var searchIndex: [(kural: Kural, searchText: String)] = []
     private let famousKuralNumbers = [1, 12, 45, 396, 400, 421, 596, 619, 664, 666]
-
+    
     func getChapterAndBookForKural(_ kuralNumber: Int) -> (chapterName: String, bookName: String)? {
         guard let details = details else { return nil }
         
@@ -84,7 +84,7 @@ class ThirukkuralViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.isSearching = true
         }
-
+        
         if query.isEmpty {
             DispatchQueue.main.async {
                 self.filteredKurals = []
@@ -113,7 +113,7 @@ class ThirukkuralViewModel: ObservableObject {
         searchWorkItem = workItem
         DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
     }
-
+    
     private func loadData() {
         if let kuralURL = Bundle.main.url(forResource: "thirukkural", withExtension: "json"),
            let detailURL = Bundle.main.url(forResource: "detail", withExtension: "json") {

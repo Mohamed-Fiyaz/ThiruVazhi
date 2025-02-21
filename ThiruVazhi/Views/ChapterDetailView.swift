@@ -15,14 +15,14 @@ struct ChapterDetailView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Binding var scrollProxy: ScrollViewProxy?
     @State private var scrollID = UUID()
-
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
             return size * 1.3  
         }
         return size
     }
-
+    
     
     var chapterKurals: [Kural] {
         viewModel.kurals.filter { $0.Number >= chapter.start && $0.Number <= chapter.end }

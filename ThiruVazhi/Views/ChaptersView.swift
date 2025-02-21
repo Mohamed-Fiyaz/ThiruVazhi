@@ -35,14 +35,14 @@ struct ChaptersView: View {
         }
         
         let filteredByBook = selectedBook == "All"
-            ? allChapters
-            : details.section.detail
-                .filter { $0.translation == selectedBook }
-                .flatMap { book in
-                    book.chapterGroup.detail.flatMap { group in
-                        group.chapters.detail
-                    }
+        ? allChapters
+        : details.section.detail
+            .filter { $0.translation == selectedBook }
+            .flatMap { book in
+                book.chapterGroup.detail.flatMap { group in
+                    group.chapters.detail
                 }
+            }
         
         if searchText.isEmpty {
             return filteredByBook
@@ -124,51 +124,51 @@ struct ChaptersView: View {
                             }
                         }
                     }
-
+                    
                     SearchBar(text: $searchText, onSearch: { query in
-
+                        
                         searchText = query
                     }, isFocused: $isSearchFocused)
-                        .padding(.horizontal)
+                    .padding(.horizontal)
                     if !searchText.isEmpty && filteredChapters.isEmpty {
                         VStack {
                             Text("No results found")
                                 .font(.system(size: fontSize(17)))
                                 .foregroundColor(.secondary)
                                 .padding()
-                                Spacer()
+                            Spacer()
                         }
                         .frame(maxWidth: .infinity)
                     } else {
-                    ScrollView {
-                        ScrollViewReader { proxy in
-                            VStack {
-                                Color.clear.frame(height: 0).id("top")
-                                
-                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                                    ForEach(filteredChapters) { chapter in
-                                        Button(action: {
-                                            scrollID = UUID()
-                                            selectedChapter = chapter
-                                        }) {
-                                            ChapterCard(chapter: chapter,
-                                                        showTamilText: viewModel.showTamilText,
-                                                        favoriteManager: favoriteManager)
+                        ScrollView {
+                            ScrollViewReader { proxy in
+                                VStack {
+                                    Color.clear.frame(height: 0).id("top")
+                                    
+                                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                        ForEach(filteredChapters) { chapter in
+                                            Button(action: {
+                                                scrollID = UUID()
+                                                selectedChapter = chapter
+                                            }) {
+                                                ChapterCard(chapter: chapter,
+                                                            showTamilText: viewModel.showTamilText,
+                                                            favoriteManager: favoriteManager)
+                                            }
+                                            .id(chapter.number)
+                                        }.padding(.top, 2)
+                                    }
+                                    .padding()
+                                    .onChange(of: selectedBook) {
+                                        if let firstChapter = filteredChapters.first {
+                                            proxy.scrollTo(firstChapter.number, anchor: .top)
                                         }
-                                        .id(chapter.number)
-                                    }.padding(.top, 2)
-                                }
-                                .padding()
-                                .onChange(of: selectedBook) { _ in
-                                    if let firstChapter = filteredChapters.first {
-                                        proxy.scrollTo(firstChapter.number, anchor: .top)
                                     }
                                 }
+                                .onAppear {
+                                    scrollProxy = proxy
+                                }
                             }
-                            .onAppear {
-                                scrollProxy = proxy
-                            }
-                        }
                         }
                     }
                 }

@@ -20,8 +20,8 @@ struct SearchBar: View {
                     .padding(.leading, 8)
                 
                 TextField("Search", text: $text)
-                    .focused($isFocused) 
-                    .onChange(of: text) { newValue in
+                    .focused($isFocused)
+                    .onChange(of: text) { oldValue, newValue in
                         onSearch(newValue)
                     }
                 
@@ -36,7 +36,7 @@ struct SearchBar: View {
                             .foregroundColor(.gray)
                     }
                     .padding(.trailing, 8)
-
+                    
                 }
             }
             .padding(.vertical, 8)
@@ -49,7 +49,7 @@ struct SearchBar: View {
                     isFocused = false
                     onSearch("")
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                                 to: nil, from: nil, for: nil)
+                                                    to: nil, from: nil, for: nil)
                 }
                 .foregroundColor(AppColors.primaryRed)
             }

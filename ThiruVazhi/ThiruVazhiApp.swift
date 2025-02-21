@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct ThiruVazhiApp: App {
     @State private var isActive = false
-
+    
     var body: some Scene {
         WindowGroup {
             if isActive {

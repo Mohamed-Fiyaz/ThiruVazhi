@@ -11,16 +11,14 @@ struct ChapterCard: View {
     let chapter: Chapter
     let showTamilText: Bool
     @ObservedObject var favoriteManager: FavoriteManager
-    
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
+    
     private func fontSize(_ size: CGFloat) -> CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-            return size * 1.3 
+            return size * 1.3
         }
         return size
     }
-
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -58,7 +56,7 @@ struct ChapterCard: View {
                 .foregroundColor(.secondary)
         }
         .padding()
-        .frame(height: showTamilText ? 140 : 110) 
+        .frame(height: showTamilText ? 140 : 110)
         .frame(maxWidth: .infinity)
         .background(AppColors.cardBg)
         .cornerRadius(10)
