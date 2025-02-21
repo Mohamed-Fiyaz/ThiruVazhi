@@ -16,13 +16,7 @@ class ThirukkuralViewModel: ObservableObject {
     @Published var filteredKurals: [Kural] = []
     @Published var famousKurals: [Kural] = []
     @Published var isSearching = false
-    
-    @Published var showTamilText: Bool {
-        didSet {
-            UserDefaults.standard.set(showTamilText, forKey: "showTamilText")
-        }
-    }
-    
+    @Published var showTamilText: Bool = false
     @Published var expandedFavoriteKurals = false
     @Published var expandedFavoriteChapters = false
     
@@ -51,14 +45,7 @@ class ThirukkuralViewModel: ObservableObject {
     }
     
     init() {
-        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
-        
-        if !hasLaunchedBefore {
-            self.showTamilText = true
-            UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
-        } else {
-            self.showTamilText = UserDefaults.standard.bool(forKey: "showTamilText")
-        }
+        self.showTamilText = false
         
         loadData()
         setKuralOfTheDay()
