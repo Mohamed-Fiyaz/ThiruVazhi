@@ -27,7 +27,7 @@ struct HistoryCard: View {
                 .foregroundColor(.black)
             
             VStack(spacing: 12) {
-                Text("Thirukkural, authored by Thiruvalluvar over 2,000 years ago, is one of the greatest literary works in Tamil. Consisting of 1,330 couplets, it is divided into three sections—Virtue (Aram), Wealth (Porul), and Love (Inbam). Each couplet, written in just seven words, conveys profound wisdom, making it a masterpiece of brevity and depth in classical literature.")
+                Text("Thirukkural, authored by Thiruvalluvar over 2,000 years ago, is one of the greatest literary works in Tamil. Consisting of 1,330 couplets, it is divided into three sections—Virtue (Aram), Wealth (Porul), and Love (Inbam). Each couplet, written in just seven Tamil words, conveys profound wisdom, making it a concise and powerful masterpiece of classical literature.")
                     .font(.system(size: fontSize(16)))
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.black)
